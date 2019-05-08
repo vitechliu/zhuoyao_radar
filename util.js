@@ -54,11 +54,6 @@ var pngs = ["1.png", "10.png", "100.png", "101.png", "102.png", "103.png", "104.
         "boss2.png", "boss3.png", "boss4.png", "boss5.png", "egg1.png", "egg2.png", "egg3.png", "egg4.png",
         "egg5.png", "leitai.png", "undefined.png"
     ],
-    // p = function (n) {
-    //     for (var g = getApp().globalData.yaojingList, p = 0; p < g.length; p++)
-    //         if (g[p].Id === n) return g[p];
-    //     return null;
-    // },
     iconSet = [{
         Id: "-2",
         level: 1,

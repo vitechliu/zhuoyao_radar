@@ -211,9 +211,9 @@ module.exports = {
         return parseInt(1e6 * g);
     },
     getHeadImagePath: function(e) {
-        var a = p(e);
-        if (null == a) return "/image/default-head.png";
-        var r = "/image/head/" + a.ImgName + ".png";
+        var a = pngs(e);
+        if (null == a) return "/original/image/default-head.png";
+        var r = "/original/image/head/" + a.ImgName + ".png";
         return g.indexOf(a.ImgName + ".png") >= 0 ? r : n + a.SmallImgPath;
     },
     getBossEggImage: function(n) {

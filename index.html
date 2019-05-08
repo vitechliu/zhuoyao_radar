@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>捉妖雷达 web</title>
+
+    <meta name="application-name" content="value" />
+    <meta name="keywords" content="value" />
+    <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
+
+    <meta name="HandheldFriendly" content="true">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3"></script>
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #app,
+        #qmap {
+            width: 100%;
+            height: 100%;
+        }
+
+        #status {
+            position: absolute;
+            color: white;
+            z-index: 9999;
+            bottom: 0;
+            left: 0;
+            height: 200px;
+            width: 500px;
+            background-color: rgba(0, 0, 0, .5);
+            padding: 15px;
+            text-shadow: 0 0 4px black;
+        }
+
+        #status #info {
+            height: 90%;
+            overflow-y: scroll;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="app">
+        <div id="status">
+            <div id="info">
+                <span v-html="status"></span>
+            </div>
+            <div id="buttons">
+                <el-button @click="getYaolingInfo">妖灵</el-button>
+                <el-button @click="getLeitaiInfo">擂台</el-button>
+            </div>
+        </div>
+        <div id="qmap"></div>
+    </div>
+
+
+    <script src="util.js"></script>
+    <!-- <script src="WAService.js"></script> -->
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                status: "",
+                socket: {},
+                apikey: "2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3",
+                map: {},
+                firstTime: true,
+                url: "wss://publicld.gwgo.qq.com?account_value=0&account_type=0&appid=0&token=0",
+            },
+            created: function () {},
+            mounted: function () {
+                this.$nextTick(_ => {
+                    this.map = new qq.maps.Map(document.getElementById("qmap"), {
+                        center: new qq.maps.LatLng(39.9610780334,
+                            116.3579177856), // 地图的中心地理坐标。
+                        zoom: 16, // 地图的中心地理坐标。
+                    });
+                });
+
+                this.socket = new WebSocket(this.url);
+                this.socket.onclose = () => {
+                    this.addStatus("WSS连接关闭");
+                };
+                this.socket.onerror = () => {
+                    this.addStatus("WSS连接错误！");
+                };
+
+                this.socket.onopen = this.onSocketOpen;
+
+                this.socket.onmessage = this.onSocketMessage;
+            },
+            methods: {
+                //Util
+                getRequestIndex: function (n) {
+                    switch (n) {
+                        case "1001":
+                            return 0;
+
+                        case "1002":
+                            return 1;
+
+                        case "1003":
+                            return 2;
+
+                        case "10040":
+                            return 3;
+
+                        case "10041":
+                            return 4;
+                    }
+                },
+                genRequestId: function (n) {
+                    var g = new Date().getTime() % 1234567;
+                    switch (n) {
+                        case "1001":
+                            unknownKey[0] = g;
+                            break;
+
+                        case "1002":
+                            unknownKey[1] = g;
+                            break;
+
+                        case "1003":
+                            unknownKey[2] = g;
+                            break;
+
+                        case "10040":
+                            unknownKey[3] = g;
+                            break;
+
+                        case "10041":
+                            unknownKey[4] = g;
+                    }
+                    return g;
+                },
+                convertLocation: function (n) {
+                    var g = n.toFixed(6);
+                    return parseInt(1e6 * g);
+                },
+                utf8ByteToUnicodeStr: function (n) {
+                    for (var g = "", p = 0; p < n.length;) {
+                        var e = n[p],
+                            a = 0;
+                        e >>> 7 == 0 ? (g += String.fromCharCode(n[p]), p += 1) : 252 == (252 & e) ? (a = (
+                                    3 & n[p]) << 30,
+                                a |= (63 & n[p + 1]) << 24, a |= (63 & n[p + 2]) << 18, a |= (63 & n[p +
+                                3]) << 12,
+                                a |= (63 & n[p + 4]) << 6, a |= 63 & n[p + 5], g += String.fromCharCode(a),
+                                p += 6) : 248 == (248 & e) ? (a = (7 & n[p]) << 24,
+                                a |= (63 & n[p + 1]) << 18, a |= (63 & n[p + 2]) << 12, a |= (63 & n[p +
+                                3]) << 6,
+                                a |= 63 & n[p + 4], g += String.fromCharCode(a), p += 5) : 240 == (240 &
+                            e) ? (a = (15 & n[p]) << 18,
+                                a |= (63 & n[p + 1]) << 12, a |= (63 & n[p + 2]) << 6, a |= 63 & n[p + 3],
+                                g += String.fromCharCode(a),
+                                p += 4) : 224 == (224 & e) ? (a = (31 & n[p]) << 12, a |= (63 & n[p + 1]) <<
+                                6,
+                                a |= 63 & n[p + 2], g += String.fromCharCode(a), p += 3) : 192 == (192 &
+                            e) ? (a = (63 & n[p]) << 6,
+                                a |= 63 & n[p + 1], g += String.fromCharCode(a), p += 2) : (g += String
+                                .fromCharCode(n[p]),
+                                p += 1);
+                    }
+                    return g;
+                },
+
+
+                onSocketOpen:function() {
+                    this.addStatus("WSS连接开启");
+                    if (this.firstTime) {
+                        this.firstTime = false;
+                        this.getSettingFileName();
+                        this.getBossLevelConfig();
+                    }
+                },
+                onSocketMessage:function(event) {
+
+                    var blob = event.data;
+
+                    var arrayBuffer;
+                    var ans;
+                    
+                    if (typeof(blob) === "string") {
+                        ans = blob;
+                        this.addStatusWithoutNewline("WSS连接信息：");
+                        this.addStatus(ans);
+                    } else {
+                        
+                        var fileReader = new FileReader();
+                        fileReader.onload = e => {
+                            arrayBuffer = e.target.result;
+                            var n = this.utf8ByteToUnicodeStr(new Uint8Array(arrayBuffer).slice(4));
+                            this.addStatusWithoutNewline("WSS连接信息：");
+                            this.addStatus(n);
+                            console.log(n);
+                        };
+                        fileReader.readAsArrayBuffer(blob);
+                        
+                    }
+                
+                },
+                arrayBufferToBase64:function( buffer ) {
+                    var binary = '';
+                    var bytes = new Uint8Array( buffer );
+                    var len = bytes.byteLength;
+                    for (var i = 0; i < len; i++) {
+                        binary += String.fromCharCode( bytes[ i ] );
+                    }
+                    return window.btoa( binary );
+                },
+                abc1:function(e) {
+                    for (var n = new ArrayBuffer(2 * e.length), r = new Uint16Array(n), t = 0, o = e.length; t < o; t++) r[t] = e.charCodeAt(t);
+                    return r;
+                },
+                json2buffer:function(n) {
+                    var r = this.abc1(JSON.stringify(n)), t = r.length, o = new ArrayBuffer(4);
+                    new DataView(o).setUint32(0, t);
+                    var s = new Uint8Array(4 + t);
+                    return s.set(new Uint8Array(o), 0), s.set(r, 4), s.buffer;
+                },
+                addStatusWithoutNewline: function (str) {
+                    this.status += str;
+                },
+                addStatus: function (str) {
+                    this.status += str + "<br>";
+                },
+                sendMessage: function (message, requestIndex) {
+                    this.addStatusWithoutNewline("WSS发送消息：");
+                    this.addStatus(JSON.stringify(message));
+                    console.log(message);
+                    //this.socket.send(this.arrayBufferToBase64(this.json2buffer(message)));
+                    this.socket.send(this.json2buffer(message));
+                },
+                getLocation: function () {
+                    return {
+                        longitude: 116.3579177856,
+                        latitude: 39.9610780334,
+                    };
+                },
+                getYaolingInfo: function () {
+                    var e = {
+                        request_type: "1001",
+                        longtitude: this.convertLocation(this.getLocation().longitude),
+                        latitude: this.convertLocation(this.getLocation().latitude),
+                        requestid: this.genRequestId("1001"),
+                        platform: 0
+                    };
+                    this.sendMessage(e, "1001");
+                },
+                getLeitaiInfo: function() {
+                    var e = {
+                        request_type: "1002",
+                        longtitude: this.convertLocation(this.getLocation().longitude),
+                        latitude: this.convertLocation(this.getLocation().latitude),
+                        requestid: this.genRequestId("1002"),
+                        platform: 0
+                    };
+                    this.sendMessage(e, "1002");
+                },
+
+
+
+                getSettingFileName: function () {
+                    var e = {
+                        request_type: "1004",
+                        cfg_type: 1,
+                        requestid: this.genRequestId("10041"),
+                        platform: 0
+                    };
+                    this.sendMessage(e, "10041");
+                },
+                getBossLevelConfig: function() {
+                    var e = {
+                        request_type: "1004",
+                        cfg_type: 0,
+                        requestid: this.genRequestId("10040"),
+                        platform: 0
+                    };
+                    this.sendMessage(e, "10040");
+                },
+            },
+        })
+    </script>
+</body>
+
+</html>

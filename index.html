@@ -105,10 +105,14 @@
             
             
             <br>
-            <el-button size="mini" @click="setFilter('稀有',filter_none)">取消筛选</el-button>
+            <el-button size="mini" @click="setFilter('全部',filter_none)">筛选全部</el-button>
             <el-button size="mini" @click="setFilter('稀有',filter_rare)">筛选稀有</el-button>
             <el-button size="mini" @click="setFilter('一觉以上',filter_t1)">筛选1觉以上</el-button>
             <el-button size="mini" @click="setFilter('二觉',filter_t2)">筛选2觉</el-button>
+
+            <br>
+            <el-button size="mini" @click="setFilter('鱼',filter_fish)">我要坤坤</el-button>
+            <el-button size="mini" @click="setFilter('巢穴',filter_nest)">筛选巢穴</el-button>
             
         </div>
         <div id="qmap"></div>
@@ -134,7 +138,7 @@
                 filteredYaoling:[],
 
                 currVersion:"sprite_0e4ebf1344bf35582f7504ee265f32eb.json", //190508版本的json 如果有变动手动更新
-                version:"v0.3.508.2346",
+                version:"v0.4.509.0106",
                 location:{
                     longitude: 116.3579177856,
                     latitude: 39.9610780334,
@@ -147,11 +151,13 @@
 
 
                 filter_rare:[
-                    2000106,2000313,2000327,2000265,2000238
+                    2000106,2000313,2000327,2000265,2000238,2000109,2000078,2004013
                 ],
                 filter_t2:[],
                 filter_t1:[],
                 filter_none:[],
+                filter_nest:[2000321,2000324,2000112],
+                filter_fish:[2000501,2000502,2000504,2000519],
 
                 current_filter:[],
             },
@@ -375,7 +381,7 @@
                     
                     switch (c) {
                         case "10041":
-                            console.log(1);
+                            //console.log(1);
                             this.getVersionFileName(data.filename);
                             break;
 
@@ -406,7 +412,7 @@
  
                 buildMarkersByData: function(t, i) {
                     this.clearAllMarkers();
-                    console.log(t);
+                    //console.log(t);
 
                     for(var i=0;i<t.length;i++) {
                         var ti = t[i];
@@ -606,23 +612,24 @@
                 getLocation: function () {
                     var that = this;
                     that.init();
-                    // if(navigator.geolocation) {
-                    //     console.log(111);
-                    //     navigator.geolocation.getCurrentPosition(
-                    //         function (position) {  
-                    //             console.log(position);
-                    //             that.location.longitude = position.coords.longitude;
-                    //             that.location.latitude = position.coords.latitude;
-                    //             that.init();
-                    //         },
-                    //         function (e) {
-                    //             throw(e.message);
-                    //             that.init();
-                    //         }
-                    //     ) 
-                    // } else {
-                    //     that.init();
-                    // }
+                    if(navigator.geolocation) {
+                        console.log(111);
+                        navigator.geolocation.getCurrentPosition(
+                            function (position) {  
+                                console.log(position);
+                                that.location.longitude = position.coords.longitude;
+                                that.location.latitude = position.coords.latitude;
+                                that.map.panTo(new qq.maps.LatLng(that.location.latitude, that.location.longitude));
+                                //that.init();
+                            },
+                            function (e) {
+                                throw(e.message);
+                                //that.init();
+                            }
+                        ) 
+                    } else {
+                        that.init();
+                    }
                 },
                 getYaolingInfo: function () {
                     if (!this.statusOK) return;

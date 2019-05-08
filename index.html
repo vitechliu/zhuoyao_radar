@@ -344,8 +344,10 @@
                     console.log(data);
 
                     var c = this.getRequestTypeFromId(data.requestid);
+                    
                     switch (c) {
                         case "10041":
+                            console.log(1);
                             this.getVersionFileName(data.filename);
                             break;
 
@@ -642,7 +644,7 @@
                     this.sendMessage(e, "10041");
                 },
                 getBossLevelConfig: function() {
-                    
+                    return;
                     var e = {
                         request_type: "1004",
                         cfg_type: 0,

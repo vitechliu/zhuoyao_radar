@@ -1,0 +1,20 @@
+<view class="container" xmlns:wx="http://www.w3.org/1999/xhtml">
+    <view class="title">
+        <image class="time-img" src="/image/icon/time.png"></image>
+        <view class="title-name">
+            时间显示
+        </view>
+    </view>
+    <view class="item">
+        <view class="item-text">
+            神灵消失时间显示
+        </view>
+        <switch bindchange="bossChange" checked="{{bossShowed}}" color="#1F8BFC"></switch>
+    </view>
+    <view class="item">
+        <view class="item-text">
+            神石孵化时间显示
+        </view>
+        <switch bindchange="bossEggChange" checked="{{bossEggShowed}}" color="#1F8BFC"></switch>
+    </view>
+</view>

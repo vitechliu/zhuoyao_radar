@@ -1,0 +1,3 @@
+<view class="container" xmlns:wx="http://www.w3.org/1999/xhtml">
+    <web-view src="https://gwgo.qq.com/cp/20180920V6/index.html"></web-view>
+</view>

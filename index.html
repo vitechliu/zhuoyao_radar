@@ -14,12 +14,12 @@
     <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
 
     <meta name="HandheldFriendly" content="true">
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="assets/vue.js"></script>
+    <link rel="stylesheet" href="assets/element/index.css">
+    <script src="assets/element/index.js"></script>
     <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="assets/js.cookie.min.js"></script>
+    <script src="assets/jquery.min.js"></script>
     <script src="tempdata.js"></script>
 
     <style>
@@ -66,6 +66,26 @@
             left:5px;
             top:5px;
         }
+        .el-notification {
+
+            width: 180px!important;
+            padding: 7px 14px 7px 7px!important;
+            border-radius: 0px!important;
+            border: none!important;
+
+            background-color: rgba(255,255,255,.7)!important;
+            -webkit-box-shadow: 0 2px 12px 0 rgba(255,255,255,.1)!important;
+            box-shadow: 0 2px 12px 0 rgba(255,255,255,.1)!important;
+         
+        }
+        .el-notification__content {
+            font-size: 13px;
+            line-height: 18px;
+            margin: 6px 0 0;
+            color: black!important;
+            text-shadow:0 0 4px white!important;
+            text-align: justify;
+        }
     </style>
 
 </head>
@@ -74,13 +94,16 @@
     <div id="app">
         <div id="status">
             <div id="info">
-                <span v-html="status"></span>
+                <iframe src="https://ghbtns.com/github-btn.html?user=liuzirui1122&repo=zhuoyao_radar&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+                <br><span v-html="status"></span>
             </div>
         </div>
         <div id="buttons">
             <el-button size="mini" @click="getYaolingInfo">妖灵</el-button>
             <el-button size="mini" @click="getLeitaiInfo">擂台(未开发)</el-button>
             <el-button size="mini" type="warning" @click="debug">Debug</el-button>
+            
+            
             <br>
             <el-button size="mini" @click="setFilter('稀有',filter_none)">取消筛选</el-button>
             <el-button size="mini" @click="setFilter('稀有',filter_rare)">筛选稀有</el-button>
@@ -111,7 +134,7 @@
                 filteredYaoling:[],
 
                 currVersion:"sprite_0e4ebf1344bf35582f7504ee265f32eb.json", //190508版本的json 如果有变动手动更新
-                version:"alpha 2.190508",
+                version:"v0.3.508.2346",
                 location:{
                     longitude: 116.3579177856,
                     latitude: 39.9610780334,
@@ -140,6 +163,11 @@
 
                 this.addStatus("捉妖雷达Web版");
                 this.addStatus("版本:"+this.version);
+                this.addStatus("更新日志:");
+                this.addStatus("修复了部分图标不显示的问题");
+                this.addStatus("部分静态资源本地化");
+                this.addStatus("优化提示");
+                this.addStatus("");
                 //this.addStatus("开发者:ZachXia,Vitech");
             },
             methods: {
@@ -386,7 +414,8 @@
                         if ($.inArray(ti.sprite_id,this.current_filter) == -1 && this.current_filter.length > 0) continue;
                         
                         var m = this.buildSpiteMarker(m,ti);
-                        var icon = new qq.maps.MarkerImage(m.iconPath);
+                        var icon = new qq.maps.MarkerImage(m.iconPath,
+                                                          null,null,null,new qq.maps.Size(40, 40));
                         var marker = new qq.maps.Marker({
                             position: new qq.maps.LatLng(m.latitude,m.longitude), 
                             map: this.map
@@ -396,7 +425,7 @@
                         this.markers.push(marker)
                         
                     }
-
+                    this.notify("筛选成功!");
                     
                     
 
@@ -423,10 +452,11 @@
                 },
                 //根据妖灵信息获取其icon地址
                 getHeadImagePath: function(e) {
+                    var webpath = "https://hy.gwgo.qq.com/sync/pet/";
                     var a = this.getYaoling(e.sprite_id);
                     if (null == a) return "original/image/default-head.png";
                     var r = "original/image/head/" + a.ImgName + ".png";
-                    return r;
+                    return pngs.indexOf(a.ImgName + ".png") >= 0 ? r : webpath + a.SmallImgPath;
                 },
 
 
@@ -533,6 +563,9 @@
                
                 //消息通知
                 messageWarning:function(message) {
+                    this.notify(message);
+                    return;
+                    
                     this.$message({
                         message: message,
                         type: 'warning'
@@ -568,16 +601,6 @@
                         this.addStatusWithoutNewline("WSS发送消息：");
                         this.addStatus(JSON.stringify(message));
                     }
-                    
-
-                    // if (true) {
-                    //     requestQueue.push({
-                    //         id:message.requestIndex,
-                    //         type:requestIndex,
-                    //     });
-                    // }
-                    //console.log(message);
-                    //this.socket.send(this.arrayBufferToBase64(this.json2buffer(message)));
                     this.socket.send(this.json2buffer(message));
                 },
                 getLocation: function () {
@@ -653,6 +676,14 @@
                     };
                     this.sendMessage(e, "10040");
                 },
+
+                notify:function(message) {
+                    this.$notify({
+                        message: message,
+                        showClose: false,
+                        duration:2000,
+                    });
+                }
             },
             computed:{
                 // filt:function(){

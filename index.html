@@ -414,7 +414,8 @@
  
 
                 filter_rare: [
-                    2000106, 2000313, 2000327, 2000265, 2000238, 2000109, 2000078,2000191,2000242
+                    2000106, 2000313, 2000327, 2000265, 2000238,
+                    2000109, 2000078,2000191,2000242,2000147,2000188
                 ],
                 filter_t2: [],
                 filter_t1: [],
@@ -423,14 +424,17 @@
                 filter_fish: [2000501, 2000502, 2000504, 2000519],
                 filter_element: [2000511,2000512,2000513,2000514,2000515],
 
+
+                
                 current_filter: [],
 
-
+                filter_bot:[2000313,2000238,2000265,2000327,2000106],
                 botMode: false,
                 botInterval: null,
                 botTime: 0,
-
-
+                botURL:"http://127.0.0.1:36524/api/v1/Cqp/CQ_sendGroupMsg",
+                botGroup:"799576270",
+                botChecked:[],
 
                 showMenu:false,
                 showBlackCover:false,
@@ -462,7 +466,8 @@
 					$(".nav-burger").toggleClass("active");
 					this.showMenu = !this.showMenu;
 					this.showBlackCover = !this.showBlackCover;
-				},
+                },
+                
                 bot_open: function () {
                     this.location = {
                         longitude: 116.3579177856,
@@ -471,11 +476,73 @@
                     this.botMode = true;
                     this.botInterval = setInterval(() => {
                         this.botCheck();
-                    }, 10000);
+                    }, 30000);
                 },
 
                 botCheck: function () {
+                    this.getYaolingBot();
+                    console.log(this.botTime);
+                    if (this.botTime == 1) {
+                        //this.ajaxGroupMessage("北邮捉妖扫描系统启动");
+                    }
+                },
+                botAnalyze:function(yaolings) {
+                    
+                    for (var i = 0; i < yaolings.length; i++) {
+                        var ti = yaolings[i];
 
+                        if ($.inArray(ti.sprite_id, this.filter_bot) == -1) continue;
+
+                        var time = new Date() - new Date(ti.gentime*1000);
+                        var second = time / 1000;
+                        var minute = Math.floor(second / 60);
+                        var second = Math.floor(second % 60);
+                        
+                        var fintime = minute+"分"+second+"秒";
+
+                        var yaoling_hash = ti.gentime.toString()+ti.latitude.toString();
+
+                        if ($.inArray(yaoling_hash,this.botChecked) >= 0) continue;
+                        
+                        this.botChecked.push(yaoling_hash);
+                        var yl = this.getYaoling(ti.sprite_id);
+
+                        geocoder = new qq.maps.Geocoder({
+                            complete: result => {
+                                var msg = "发现一只"+yl.Name+",位于"+result.detail.address+",剩余时间:"+fintime;
+                                this.ajaxGroupMessage(msg);
+                            }
+                        });
+                        
+                        var coord = new qq.maps.LatLng(ti.latitude/1e6,ti.longtitude/1e6);
+                        
+                        geocoder.getAddress(coord);
+
+                        
+                        continue;
+
+
+                    }
+                    
+                },
+                // botMessage:function(monsters) {
+                //     for (var i=0;i<monsters.length;i++){
+                //         var mi = monsters[i];
+                        
+                //         var generateMessage = "123123";
+                //         this.ajaxGroupMessage(generateMessage);
+                //     }
+                // },
+
+                ajaxGroupMessage:function(mes) {
+                    // console.log(mes);
+                    // return;
+                    $.post("request.php",{
+                            "qq": this.botGroup,
+                            "msg": mes
+                        },function(data){
+                            console.log(data);
+                        });
                 },
 
 
@@ -719,7 +786,8 @@
 
                         case "1001":
                             console.log("获取到妖灵数量", data.sprite_list.length);
-                            this.buildMarkersByData(data.sprite_list, 1);
+                            if (this.botMode) this.botAnalyze(data.sprite_list);
+                            else this.buildMarkersByData(data.sprite_list, 1);
                             break;
 
                         case "1002":

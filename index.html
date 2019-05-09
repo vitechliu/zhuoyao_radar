@@ -194,7 +194,7 @@
             font-size:14px;
             color:#333;
         }
-        .side-content hr {
+        .side-content .hr {
             background-color:#F3F4F8;
             height:10px;
             width:100%;
@@ -379,7 +379,9 @@
 
                 markers: [],
 
-
+                settings:{
+                    
+                },
                 fit_t1:false,
                 fit_t2:true,
                 fit_all:false,
@@ -422,6 +424,10 @@
                 this.addStatus("点击地图自动筛选功能");
                 this.addStatus("");
                 //this.addStatus("开发者:ZachXia,Vitech");
+
+                _.setTimeout(() => {
+                    this.notify("提示:点击右下角菜单开始筛选！");
+                },2000)
             },
             methods: {
                 openMenu() {

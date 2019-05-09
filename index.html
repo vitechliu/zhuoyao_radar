@@ -20,6 +20,7 @@
     <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3"></script>
     <script src="assets/js.cookie.min.js"></script>
     <script src="assets/jquery.min.js"></script>
+    <script src="assets/lodash.min.js"></script>
     <script src="tempdata.js"></script>
 
     <style>
@@ -52,7 +53,7 @@
             padding: 15px;
             text-shadow: 0 0 4px black;
 
-            display:none;
+            display: none;
         }
 
         #status #info {
@@ -60,41 +61,268 @@
             overflow-y: scroll;
 
         }
+
         #buttons {
             position: absolute;
-            z-index:50;
-            left:5px;
-            top:5px;
+            z-index: 50;
+            left: 5px;
+            top: 5px;
         }
+
         .el-notification {
 
-            width: 180px!important;
-            padding: 7px 14px 7px 7px!important;
-            border-radius: 0px!important;
-            border: none!important;
+            width: 180px !important;
+            padding: 7px 14px 7px 7px !important;
+            border-radius: 0px !important;
+            border: none !important;
 
-            background-color: rgba(255,255,255,.7)!important;
-            -webkit-box-shadow: 0 2px 12px 0 rgba(255,255,255,.1)!important;
-            box-shadow: 0 2px 12px 0 rgba(255,255,255,.1)!important;
-         
+            background-color: rgba(255, 255, 255, .7) !important;
+            -webkit-box-shadow: 0 2px 12px 0 rgba(255, 255, 255, .1) !important;
+            box-shadow: 0 2px 12px 0 rgba(255, 255, 255, .1) !important;
+
         }
+
         .el-notification__content {
             font-size: 13px;
             line-height: 18px;
             margin: 6px 0 0;
-            color: black!important;
-            text-shadow:0 0 4px white!important;
+            color: black !important;
+            text-shadow: 0 0 4px white !important;
             text-align: justify;
+        }
+
+        .nav-burger {
+			width:2.1875rem;
+			height:2.1875rem;
+			position:absolute;
+			right:0.6875rem;
+			top:0.3125rem;
+			cursor: pointer;
+			text-align:center;
+			-webkit-display:flex;
+			display:flex;
+			-ms-align-items:center;
+			-webkit-align-items:center;
+			align-items:center;
+			-webkit-justify-content:center;
+			justify-content:center;
+			z-index:90000;
+		}
+		.nav-burger button {
+			position: relative;
+			display: block;
+			width: 1.5625rem;
+			height: 0.9375rem;
+			margin: 0 auto;
+			border: none;
+			cursor: pointer;
+			background: transparent;
+			color: inherit;
+			font-size: 0;
+			border-top: 1px solid black;
+    		border-bottom: 1px solid black; 
+			transition: height 0.35s 0.35s, border-color 0.35s 0.35s, transform 0.35s 0s;
+		}
+		
+		.nav-burger button:before,
+		.nav-burger button:after {
+			position: absolute;
+			top: 0;
+			display: block;
+			content: "";
+			transition: transform 0.35s;
+			left: 0;
+    		border-right: 1px solid black;
+			border-top: 1px solid black;
+			transform: translate(0, -50%);
+			width: 50%;
+			height: 0;
+			background: transparent;
+			top: 50%;
+		}
+		.nav-burger button:focus {
+			outline:none;
+		}
+		.nav-burger button:after {
+			left: auto;
+			right:0;
+			border-left: 1px solid black;
+			border-right:none;
+		}    
+		.nav-burger.active button {
+			height: 0;
+			border-color: transparent;
+			transform: rotate(360deg);
+			transition: all 0.35s 0s, transform 0.7s 0s;
+		}
+		.nav-burger.active button:before,
+		.nav-burger.active button:after {
+			height: 0.78125rem;
+			transition: height 0.35s 0.35s, transform 0.35s 0.35s;
+		}
+		.nav-burger.active button:before {
+			transform: translate(-0.175rem, -50%) rotate(45deg);
+		}
+		.nav-burger.active button:after {
+			transform: translate(0.175rem, -50%) rotate(-45deg);
+		}
+		.side-nav {
+			height:100%;
+			max-width:19.0625rem;
+			width:19.0625rem;
+			position:fixed;
+			z-index:80000;
+			top:0;
+			right:0;
+			background-color:white;
+		}
+		.side-header {
+			height:3.6875rem;
+			border-bottom:10px solid #F3F4F8;
+            padding:10px;
+		}
+        .side-content ul{
+			padding:0 10px 10px 10px;
+            list-style: none;
+		}
+		.side-content li {
+			height:20px;
+			border-bottom: 1px solid #F2F3F3;
+			padding:10px 5px;
+		}
+        .side_content li span {
+            font-size:14px;
+            color:#333;
+        }
+        .side-content hr {
+            background-color:#F3F4F8;
+            height:10px;
+            width:100%;
+        }
+        div.el-switch {
+            float:right;
+            margin-right:10px;
+        }
+       
+        .side-footer {
+			width:100%;
+			height:30px;
+			background-color:#F3F4F8;
+			position:absolute;
+			bottom:0;
+            padding:10px;
+		}
+        .black-screen {
+			position:fixed;
+			width:100%;
+			height:120%;
+			height:calc(100% + 45px);
+			height:calc(100% + 2.8125rem);
+			background-color:rgba(0,0,0,0.4);
+			z-index:70000;
+			top:-2.8125rem;
+		}
+		.side-enter-active, .side-leave-active {
+			transition: opacity .5s,right .5s;
+		}
+		.side-enter, .side-leave-to  {
+			opacity: 0;
+			right:-19.0625rem;
+		}
+		.black-enter-active, .black-leave-active {
+			transition: opacity .5s;
+		}
+		.black-enter, .black-leave-to  {
+			opacity: 0;
+		}
+        .burger-wrap {
+            position:absolute;
+            right:0;
+            bottom:50px;
+            z-index:99999;
         }
     </style>
 
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" >
+        <div class="burger-wrap">
+            <div class="nav-burger">
+				<button class='menu-toggle' @click.prevent="openMenu">Menu</button>
+			</div>
+        </div>
+        <transition name="black">
+            <div class="black-screen" v-show="showBlackCover" @click.prevent="openMenu">
+            </div>
+        </transition>
+        <transition name="side">
+            <div class="side-nav" v-show="showMenu">
+                <div class="side-header">
+                    <h2>捉妖雷达 - Web</h2>
+                    <p>Version: {{ version }}</p>
+                </div>
+                <div class="side-content">
+                    <div class="header" style="font-size:18px;padding-left:10px;padding-top:5px;">筛选</div>
+                    <ul>
+                        <li>
+                            <span class="tag">稀有</span>
+                            <el-switch
+                            v-model="fit_rare">
+                            </el-switch>
+                        </li>
+                        <li>
+                            <span class="tag">1觉</span>
+                            <el-switch
+                            v-model="fit_t1">
+                            </el-switch>
+                        </li>
+                        <li>
+                            <span class="tag">2觉</span>
+                            <el-switch
+                            v-model="fit_t2">
+                            </el-switch>
+                        </li>
+                        <li>
+                            <span class="tag">巢穴</span>
+                            <el-switch
+                            v-model="fit_nest">
+                            </el-switch>
+                        </li>
+                        <li>
+                            <span class="tag">鲲鲲</span>
+                            <el-switch
+                            v-model="fit_fish">
+                            </el-switch>
+                        </li>
+                        <li>
+                            <span class="tag">其他所有（慎选）</span>
+                            <el-switch
+                            v-model="fit_all">
+                            </el-switch>
+                        </li>
+                    </ul>
+                    <div class="hr"></div>
+                    <div class="header" style="font-size:18px;padding-left:10px;padding-top:5px;">设置</div>
+                    <ul>
+                        <li>
+                            <span class="tag">点击地图自动搜索</span>
+                            <el-switch
+                            v-model="auto_search">
+                            </el-switch>
+                        </li>
+                    </ul>
+                </div> 
+                <div class="side-footer">
+                        <iframe
+                        src="https://ghbtns.com/github-btn.html?user=liuzirui1122&repo=zhuoyao_radar&type=star&count=true&size=large"
+                        frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+                </div>
+            </div>
+        </transition>        
         <div id="status">
             <div id="info">
-                <iframe src="https://ghbtns.com/github-btn.html?user=liuzirui1122&repo=zhuoyao_radar&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+                
                 <br><span v-html="status"></span>
             </div>
         </div>
@@ -102,9 +330,9 @@
             <el-button size="mini" @click="getYaolingInfo">妖灵</el-button>
             <el-button size="mini" @click="getLeitaiInfo">擂台(未开发)</el-button>
             <el-button size="mini" type="warning" @click="debug">Debug</el-button>
-            
-            
-            <br>
+
+
+            <!-- <br>
             <el-button size="mini" @click="setFilter('全部',filter_none)">筛选全部</el-button>
             <el-button size="mini" @click="setFilter('稀有',filter_rare)">筛选稀有</el-button>
             <el-button size="mini" @click="setFilter('一觉以上',filter_t1)">筛选1觉以上</el-button>
@@ -112,8 +340,8 @@
 
             <br>
             <el-button size="mini" @click="setFilter('鱼',filter_fish)">我要坤坤</el-button>
-            <el-button size="mini" @click="setFilter('巢穴',filter_nest)">筛选巢穴</el-button>
-            
+            <el-button size="mini" @click="setFilter('巢穴',filter_nest)">筛选巢穴</el-button> -->
+
         </div>
         <div id="qmap"></div>
     </div>
@@ -130,36 +358,56 @@
                 socket: {},
                 apikey: "2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3",
                 map: {},
+                clickMarker:null,
+                userMarker:null,
+
                 firstTime: true,
                 url: "wss://publicld.gwgo.qq.com?account_value=0&account_type=0&appid=0&token=0",
 
-                reconnectTimeout:1000,
+                reconnectTimeout: 1000,
 
-                filteredYaoling:[],
 
-                currVersion:"sprite_0e4ebf1344bf35582f7504ee265f32eb.json", //190508版本的json 如果有变动手动更新
-                version:"v0.4.509.0106",
-                location:{
+                currVersion: "sprite_0e4ebf1344bf35582f7504ee265f32eb.json", //190508版本的json 如果有变动手动更新
+                version: "v0.5.509.1040",
+                location: {
                     longitude: 116.3579177856,
                     latitude: 39.9610780334,
                 },
 
-                statusOK:false,
-                yaolings:{},
+                statusOK: false,
+                yaolings: {},
 
-                markers:[],
+                markers: [],
 
 
-                filter_rare:[
-                    2000106,2000313,2000327,2000265,2000238,2000109,2000078,2004013
+                fit_t1:false,
+                fit_t2:true,
+                fit_all:false,
+                fit_nest:false,
+                fit_rare:true,
+                fit_fish:false,
+
+                filter_rare: [
+                    2000106, 2000313, 2000327, 2000265, 2000238, 2000109, 2000078, 2004013
                 ],
-                filter_t2:[],
-                filter_t1:[],
-                filter_none:[],
-                filter_nest:[2000321,2000324,2000112],
-                filter_fish:[2000501,2000502,2000504,2000519],
+                filter_t2: [],
+                filter_t1: [],
+                filter_nest: [2000321, 2000324, 2000112],
+                filter_fish: [2000501, 2000502, 2000504, 2000519],
 
-                current_filter:[],
+                current_filter: [],
+
+
+                botMode: false,
+                botInterval: null,
+                botTime: 0,
+
+
+
+                showMenu:false,
+                showBlackCover:false,
+                auto_search:false,
+
             },
             created: function () {},
             mounted: function () {
@@ -168,23 +416,43 @@
                 this.current_filter = this.filter_none;
 
                 this.addStatus("捉妖雷达Web版");
-                this.addStatus("版本:"+this.version);
+                this.addStatus("版本:" + this.version);
                 this.addStatus("更新日志:");
-                this.addStatus("修复了部分图标不显示的问题");
-                this.addStatus("部分静态资源本地化");
-                this.addStatus("优化提示");
+                this.addStatus("侧边栏筛选");
+                this.addStatus("点击地图自动筛选功能");
                 this.addStatus("");
                 //this.addStatus("开发者:ZachXia,Vitech");
             },
             methods: {
-                debug:function(){
+                openMenu() {
+					$(".nav-burger").toggleClass("active");
+					this.showMenu = !this.showMenu;
+					this.showBlackCover = !this.showBlackCover;
+				},
+                bot_open: function () {
+                    this.location = {
+                        longitude: 116.3579177856,
+                        latitude: 39.9610780334,
+                    };
+                    this.botMode = true;
+                    this.botInterval = setInterval(() => {
+                        this.botCheck();
+                    }, 10000);
+                },
+
+                botCheck: function () {
+
+                },
+
+
+                debug: function () {
                     $("#status").toggle();
                 },
-                init:function() {
-                    var location = this.location;  
+                init: function () {
+                    var location = this.location;
 
                     this.map = new qq.maps.Map(document.getElementById("qmap"), {
-                        center: new qq.maps.LatLng(this.location.latitude,this.location.longitude), 
+                        center: new qq.maps.LatLng(this.location.latitude, this.location.longitude),
                         zoom: 16, // 地图的中心地理坐标。
                     });
 
@@ -195,15 +463,32 @@
                     );
                     this.connectSocket();
                 },
-                
-                clickMap:function(e) {
+
+                clickMap: function (e) {
                     this.messageWarning("位置已重置,请重新筛选");
                     this.location.longitude = e.latLng.lng;
                     this.location.latitude = e.latLng.lat;
-                },
-                getYaolings:function(){
+                    var icon = new qq.maps.MarkerImage("original/image/icon/notify-arrow.png",
+                            null, null, null, new qq.maps.Size(40, 40));
+                    if (this.clickMarker!=null) this.clickMarker.setPosition(new qq.maps.LatLng(e.latLng.lat, e.latLng.lng));
+                    else {
+                        this.clickMarker = new qq.maps.Marker({
+                            position: new qq.maps.LatLng(e.latLng.lat, e.latLng.lng),
+                            map: this.map
+                        });
+                        this.clickMarker.setIcon(icon);
+                    }
 
-                    var url = "https://hy.gwgo.qq.com/sync/pet/config/"+this.currVersion;
+                    if (this.auto_search) {
+                        this.getYaolingInfo();
+                    }
+                    
+                    
+                   
+                },
+                getYaolings: function () {
+
+                    var url = "https://hy.gwgo.qq.com/sync/pet/config/" + this.currVersion;
                     // try {
                     //     $.getJSON(url,result => {
                     //         console.log(result);
@@ -222,11 +507,11 @@
                     this.statusOK = true;
                 },
 
-                generateFilters:function(){
-                    for (var i=0;i<this.yaolings.length;i++) {
+                generateFilters: function () {
+                    for (var i = 0; i < this.yaolings.length; i++) {
                         var yi = this.yaolings[i];
                         if (yi.Level == 3) this.filter_t2.push(yi.Id);
-                        if (yi.Level > 1) this.filter_t1.push(yi.Id);
+                        if (yi.Level == 2) this.filter_t1.push(yi.Id);
                     }
                 },
                 //Util
@@ -272,8 +557,9 @@
                     }
                     return g;
                 },
-                getRequestTypeFromId: function(n) {
-                    return unknownKey[0] == n ? "1001" :  unknownKey[1] == n ? "1002" :  unknownKey[2] == n ? "1003" :  unknownKey[3] == n ? "10040" :  unknownKey[4] == n ? "10041" : 0;
+                getRequestTypeFromId: function (n) {
+                    return unknownKey[0] == n ? "1001" : unknownKey[1] == n ? "1002" : unknownKey[2] == n ?
+                        "1003" : unknownKey[3] == n ? "10040" : unknownKey[4] == n ? "10041" : 0;
                 },
                 convertLocation: function (n) {
                     var g = n.toFixed(6);
@@ -284,30 +570,30 @@
                         var e = n[p],
                             a = 0;
                         e >>> 7 == 0 ? (g += String.fromCharCode(n[p]), p += 1) : 252 == (252 & e) ? (a = (
-                                    3 & n[p]) << 30,
-                                a |= (63 & n[p + 1]) << 24, a |= (63 & n[p + 2]) << 18, a |= (63 & n[p +
+                                3 & n[p]) << 30,
+                            a |= (63 & n[p + 1]) << 24, a |= (63 & n[p + 2]) << 18, a |= (63 & n[p +
                                 3]) << 12,
-                                a |= (63 & n[p + 4]) << 6, a |= 63 & n[p + 5], g += String.fromCharCode(a),
-                                p += 6) : 248 == (248 & e) ? (a = (7 & n[p]) << 24,
-                                a |= (63 & n[p + 1]) << 18, a |= (63 & n[p + 2]) << 12, a |= (63 & n[p +
+                            a |= (63 & n[p + 4]) << 6, a |= 63 & n[p + 5], g += String.fromCharCode(a),
+                            p += 6) : 248 == (248 & e) ? (a = (7 & n[p]) << 24,
+                            a |= (63 & n[p + 1]) << 18, a |= (63 & n[p + 2]) << 12, a |= (63 & n[p +
                                 3]) << 6,
-                                a |= 63 & n[p + 4], g += String.fromCharCode(a), p += 5) : 240 == (240 &
+                            a |= 63 & n[p + 4], g += String.fromCharCode(a), p += 5) : 240 == (240 &
                             e) ? (a = (15 & n[p]) << 18,
-                                a |= (63 & n[p + 1]) << 12, a |= (63 & n[p + 2]) << 6, a |= 63 & n[p + 3],
-                                g += String.fromCharCode(a),
-                                p += 4) : 224 == (224 & e) ? (a = (31 & n[p]) << 12, a |= (63 & n[p + 1]) <<
-                                6,
-                                a |= 63 & n[p + 2], g += String.fromCharCode(a), p += 3) : 192 == (192 &
+                            a |= (63 & n[p + 1]) << 12, a |= (63 & n[p + 2]) << 6, a |= 63 & n[p + 3],
+                            g += String.fromCharCode(a),
+                            p += 4) : 224 == (224 & e) ? (a = (31 & n[p]) << 12, a |= (63 & n[p + 1]) <<
+                            6,
+                            a |= 63 & n[p + 2], g += String.fromCharCode(a), p += 3) : 192 == (192 &
                             e) ? (a = (63 & n[p]) << 6,
-                                a |= 63 & n[p + 1], g += String.fromCharCode(a), p += 2) : (g += String
-                                .fromCharCode(n[p]),
-                                p += 1);
+                            a |= 63 & n[p + 1], g += String.fromCharCode(a), p += 2) : (g += String
+                            .fromCharCode(n[p]),
+                            p += 1);
                     }
                     return g;
                 },
-                
 
-                connectSocket:function() {
+
+                connectSocket: function () {
                     this.socket = new WebSocket(this.url);
                     this.socket.onclose = this.onSocketClose;
 
@@ -316,11 +602,11 @@
                     this.socket.onopen = this.onSocketOpen;
 
                     this.socket.onmessage = this.onSocketMessage;
-                },  
-                reconnectSocket:function(){
+                },
+                reconnectSocket: function () {
 
                 },
-                onSocketOpen:function() {
+                onSocketOpen: function () {
                     this.addStatus("WSS连接开启");
                     if (this.firstTime) {
                         this.firstTime = false;
@@ -328,57 +614,57 @@
                         this.getBossLevelConfig();
                     }
                 },
-                onSocketMessage:function(event) {
+                onSocketMessage: function (event) {
 
                     var blob = event.data;
 
                     var arrayBuffer;
                     var ans;
-                    
-                    if (typeof(blob) === "string") {
+
+                    if (typeof (blob) === "string") {
                         //ans = blob;
                         //this.addStatusWithoutNewline("WSS连接信息：");
                         //this.addStatus(ans);
                     } else {
-                        
+
                         var fileReader = new FileReader();
                         fileReader.onload = e => {
                             arrayBuffer = e.target.result;
                             var n = this.utf8ByteToUnicodeStr(new Uint8Array(arrayBuffer).slice(4));
                             //this.addStatusWithoutNewline("WSS连接信息：");
                             //this.addStatus(n);
-                            
+
                             var data = JSON.parse(n);
-                            
+
 
                             this.handleMessage(data)
                         };
                         fileReader.readAsArrayBuffer(blob);
-                        
+
                     }
-                
+
                 },
-                onSocketClose:function() {
+                onSocketClose: function () {
                     this.addStatus("WSS连接关闭");
                     setTimeout(() => {
                         this.addStatus("重连中");
                         this.connectSocket();
-                    },this.reconnectTimeout);
+                    }, this.reconnectTimeout);
                 },
-                onSocketError:function(){
+                onSocketError: function () {
                     this.addStatus("WSS连接错误");
                     setTimeout(() => {
                         this.addStatus("重连中");
                         this.connectSocket();
-                    },this.reconnectTimeout);
+                    }, this.reconnectTimeout);
                 },
-                
 
-                handleMessage:function(data) {
+
+                handleMessage: function (data) {
                     console.log(data);
 
                     var c = this.getRequestTypeFromId(data.requestid);
-                    
+
                     switch (c) {
                         case "10041":
                             //console.log(1);
@@ -391,61 +677,66 @@
 
                         case "1001":
                             console.log("获取到妖灵数量", data.sprite_list.length);
-                            this.buildMarkersByData(data.sprite_list,1);
+                            this.buildMarkersByData(data.sprite_list, 1);
                             break;
 
                         case "1002":
                             //this.getLeitaiNearby(data);
-                        
+
                     }
                 },
-                getVersionFileName:function(name){
-                    if(name != this.currVersion) {
+                getVersionFileName: function (name) {
+                    if (name != this.currVersion) {
                         this.getYaolings(name);
                         console.info("有新版本的icon!");
                         this.messageWarning("有新版本的妖灵库，请通知作者更新！！");
                     } else {
                         this.getYaolings(this.currVersion);
                     }
-                    
+
                 },
- 
-                buildMarkersByData: function(t, i) {
+
+                buildMarkersByData: function (t, i) {
                     this.clearAllMarkers();
                     //console.log(t);
 
-                    for(var i=0;i<t.length;i++) {
+                    for (var i = 0; i < t.length; i++) {
                         var ti = t[i];
+
+                        if (this.fit.length == 1 && this.fit[0] == "special") {
+
+                        } else {
+                            if ($.inArray(ti.sprite_id, this.fit) == -1) continue;
+                        }
                         
-                        if ($.inArray(ti.sprite_id,this.current_filter) == -1 && this.current_filter.length > 0) continue;
-                        
-                        var m = this.buildSpiteMarker(m,ti);
+
+                        var m = this.buildSpiteMarker(m, ti);
                         var icon = new qq.maps.MarkerImage(m.iconPath,
-                                                          null,null,null,new qq.maps.Size(40, 40));
+                            null, null, null, new qq.maps.Size(40, 40));
                         var marker = new qq.maps.Marker({
-                            position: new qq.maps.LatLng(m.latitude,m.longitude), 
+                            position: new qq.maps.LatLng(m.latitude, m.longitude),
                             map: this.map
                         });
                         marker.setIcon(icon);
 
                         this.markers.push(marker)
-                        
+
                     }
                     this.notify("筛选成功!");
-                    
-                    
+
+
 
                 },
 
-                clearAllMarkers:function(){
-                    for (var i=0;i<this.markers.length;i++) {
+                clearAllMarkers: function () {
+                    for (var i = 0; i < this.markers.length; i++) {
                         this.markers[i].setMap(null);
                     }
                     this.markers = [];
                 },
 
-                buildSpiteMarker:function(id,ti){
-                    
+                buildSpiteMarker: function (id, ti) {
+
                     var icon = this.getHeadImagePath(ti);
                     return {
                         id: id,
@@ -457,7 +748,7 @@
                     };
                 },
                 //根据妖灵信息获取其icon地址
-                getHeadImagePath: function(e) {
+                getHeadImagePath: function (e) {
                     var webpath = "https://hy.gwgo.qq.com/sync/pet/";
                     var a = this.getYaoling(e.sprite_id);
                     if (null == a) return "original/image/default-head.png";
@@ -466,9 +757,9 @@
                 },
 
 
-                setFilter:function(str,f) {
+                setFilter: function (str, f) {
                     this.current_filter = f;
-                    this.addStatus("已修改筛选规则："+str);
+                    this.addStatus("已修改筛选规则：" + str);
                 },
                 //
                 // buildMarkersByData: function(t, i) {
@@ -565,33 +856,36 @@
                 //         height: 40
                 //     };
                 // },
-               
-               
+
+
                 //消息通知
-                messageWarning:function(message) {
+                messageWarning: function (message) {
                     this.notify(message);
                     return;
-                    
+
                     this.$message({
                         message: message,
                         type: 'warning'
                     });
                 },
-                arrayBufferToBase64:function( buffer ) {
+                arrayBufferToBase64: function (buffer) {
                     var binary = '';
-                    var bytes = new Uint8Array( buffer );
+                    var bytes = new Uint8Array(buffer);
                     var len = bytes.byteLength;
                     for (var i = 0; i < len; i++) {
-                        binary += String.fromCharCode( bytes[ i ] );
+                        binary += String.fromCharCode(bytes[i]);
                     }
-                    return window.btoa( binary );
+                    return window.btoa(binary);
                 },
-                abc1:function(e) {
-                    for (var n = new ArrayBuffer(2 * e.length), r = new Uint16Array(n), t = 0, o = e.length; t < o; t++) r[t] = e.charCodeAt(t);
+                abc1: function (e) {
+                    for (var n = new ArrayBuffer(2 * e.length), r = new Uint16Array(n), t = 0, o = e
+                        .length; t < o; t++) r[t] = e.charCodeAt(t);
                     return r;
                 },
-                json2buffer:function(n) {
-                    var r = this.abc1(JSON.stringify(n)), t = r.length, o = new ArrayBuffer(4);
+                json2buffer: function (n) {
+                    var r = this.abc1(JSON.stringify(n)),
+                        t = r.length,
+                        o = new ArrayBuffer(4);
                     new DataView(o).setUint32(0, t);
                     var s = new Uint8Array(4 + t);
                     return s.set(new Uint8Array(o), 0), s.set(r, 4), s.buffer;
@@ -612,27 +906,34 @@
                 getLocation: function () {
                     var that = this;
                     that.init();
-                    if(navigator.geolocation) {
-                        console.log(111);
+                    if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(
-                            function (position) {  
+                            function (position) {
                                 console.log(position);
                                 that.location.longitude = position.coords.longitude;
                                 that.location.latitude = position.coords.latitude;
-                                that.map.panTo(new qq.maps.LatLng(that.location.latitude, that.location.longitude));
+
+                                var pos = new qq.maps.LatLng(that.location.latitude, that.location
+                                    .longitude);
+                                that.map.panTo(pos);
+                                that.userMarker = new qq.maps.Marker({
+                                    position: pos,
+                                    map: that.map
+                                });
+
                                 //that.init();
                             },
                             function (e) {
-                                throw(e.message);
+                                throw (e.message);
                                 //that.init();
                             }
-                        ) 
+                        )
                     } else {
                         that.init();
                     }
                 },
                 getYaolingInfo: function () {
-                    if (!this.statusOK) return;
+                    if (!this.statusOK || this.botMode) return;
                     var e = {
                         request_type: "1001",
                         longtitude: this.convertLocation(this.location.longitude),
@@ -642,12 +943,12 @@
                     };
                     this.sendMessage(e, "1001");
                 },
-                
-                getLeitaiInfo: function() {
+
+                getLeitaiInfo: function () {
                     this.addStatus("功能开发中!");
                     this.messageWarning("功能开发中!");
                     return;
-                    if (!this.statusOK) return;
+                    if (!this.statusOK || this.botMode) return;
                     var e = {
                         request_type: "1002",
                         longtitude: this.convertLocation(this.location.longitude),
@@ -657,7 +958,19 @@
                     };
                     this.sendMessage(e, "1002");
                 },
-                getYaoling:function(n) {
+
+                getYaolingBot: function () {
+                    this.botTime++;
+                    var e = {
+                        request_type: "1001",
+                        longtitude: this.convertLocation(this.location.longitude),
+                        latitude: this.convertLocation(this.location.latitude),
+                        requestid: this.genRequestId("1001"),
+                        platform: 0
+                    };
+                    this.sendMessage(e, "1001");
+                },
+                getYaoling: function (n) {
                     for (var g = this.yaolings, p = 0; p < g.length; p++)
                         if (g[p].Id == n) return g[p];
                     return null;
@@ -673,7 +986,7 @@
                     };
                     this.sendMessage(e, "10041");
                 },
-                getBossLevelConfig: function() {
+                getBossLevelConfig: function () {
                     return;
                     var e = {
                         request_type: "1004",
@@ -684,20 +997,31 @@
                     this.sendMessage(e, "10040");
                 },
 
-                notify:function(message) {
+                notify: function (message) {
                     this.$notify({
                         message: message,
                         showClose: false,
-                        duration:2000,
+                        duration: 2000,
                     });
                 }
             },
-            computed:{
-                // filt:function(){
-                //     for (var i=0;i<this.current_filter.length;i++) {
-                //         this.yaolings
-                //     }
-                // },
+            computed: {
+                fit:function() {
+                    
+                    var ans = [];
+                    if (this.fit_all) {
+                        ans = ["special"];
+                        return ans;
+                    }
+
+                    if (this.fit_t1) ans = _.union(ans,this.filter_t1);
+                    if (this.fit_t2) ans = _.union(ans,this.filter_t2);
+                    if (this.fit_nest) ans = _.union(ans,this.filter_nest);
+                    if (this.fit_fish) ans = _.union(ans,this.filter_fish);
+                    if (this.fit_rare) ans = _.union(ans,this.filter_rare);
+
+                    return ans;
+                }
             },
         })
     </script>

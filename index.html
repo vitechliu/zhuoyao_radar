@@ -181,6 +181,11 @@
 			border-bottom:10px solid #F3F4F8;
             padding:10px;
 		}
+        .side-content {
+            max-height:70%;
+            max-height:calc(100vh - 130px);
+            overflow-y:auto;
+        }
         .side-content ul{
 			padding:0 10px 10px 10px;
             list-style: none;
@@ -268,37 +273,49 @@
                         <li>
                             <span class="tag">稀有</span>
                             <el-switch
-                            v-model="fit_rare">
+                            v-model="settings.fit.rare">
                             </el-switch>
                         </li>
                         <li>
                             <span class="tag">1觉</span>
                             <el-switch
-                            v-model="fit_t1">
+                            v-model="settings.fit.t1">
                             </el-switch>
                         </li>
                         <li>
                             <span class="tag">2觉</span>
                             <el-switch
-                            v-model="fit_t2">
+                            v-model="settings.fit.t2">
                             </el-switch>
                         </li>
                         <li>
                             <span class="tag">巢穴</span>
                             <el-switch
-                            v-model="fit_nest">
+                            v-model="settings.fit.nest">
+                            </el-switch>
+                        </li>
+                        <li>
+                            <span class="tag">地域</span>
+                            <el-switch
+                            v-model="settings.fit.feature">
                             </el-switch>
                         </li>
                         <li>
                             <span class="tag">鲲鲲</span>
                             <el-switch
-                            v-model="fit_fish">
+                            v-model="settings.fit.fish">
+                            </el-switch>
+                        </li>
+                        <li>
+                            <span class="tag">元素</span>
+                            <el-switch
+                            v-model="settings.fit.element">
                             </el-switch>
                         </li>
                         <li>
                             <span class="tag">其他所有（慎选）</span>
                             <el-switch
-                            v-model="fit_all">
+                            v-model="settings.fit.all">
                             </el-switch>
                         </li>
                     </ul>
@@ -308,7 +325,7 @@
                         <li>
                             <span class="tag">点击地图自动搜索</span>
                             <el-switch
-                            v-model="auto_search">
+                            v-model="settings.auto_search">
                             </el-switch>
                         </li>
                     </ul>
@@ -368,7 +385,7 @@
 
 
                 currVersion: "sprite_0e4ebf1344bf35582f7504ee265f32eb.json", //190508版本的json 如果有变动手动更新
-                version: "v0.5.509.1040",
+                version: "v0.6.509.1450",
                 location: {
                     longitude: 116.3579177856,
                     latitude: 39.9610780334,
@@ -380,22 +397,30 @@
                 markers: [],
 
                 settings:{
-                    
+                    fit:{
+                        t1:false,
+                        t2:true,
+                        all:false,
+                        nest:false,
+                        rare:true,
+                        fish:false,    
+                        feature:false,   
+                        element:false, 
+                    },
+
+                    auto_search:false,
                 },
-                fit_t1:false,
-                fit_t2:true,
-                fit_all:false,
-                fit_nest:false,
-                fit_rare:true,
-                fit_fish:false,
+ 
 
                 filter_rare: [
-                    2000106, 2000313, 2000327, 2000265, 2000238, 2000109, 2000078, 2004013
+                    2000106, 2000313, 2000327, 2000265, 2000238, 2000109, 2000078,2000191,2000242
                 ],
                 filter_t2: [],
                 filter_t1: [],
                 filter_nest: [2000321, 2000324, 2000112],
+                filter_feature: [2004013,2004016,2004010,2004007,2004004,2000206],
                 filter_fish: [2000501, 2000502, 2000504, 2000519],
+                filter_element: [2000511,2000512,2000513,2000514,2000515],
 
                 current_filter: [],
 
@@ -408,10 +433,12 @@
 
                 showMenu:false,
                 showBlackCover:false,
-                auto_search:false,
+                
 
             },
-            created: function () {},
+            created: function () {
+                this.getCookies();
+            },
             mounted: function () {
                 this.getLocation();
 
@@ -420,7 +447,7 @@
                 this.addStatus("捉妖雷达Web版");
                 this.addStatus("版本:" + this.version);
                 this.addStatus("更新日志:");
-                this.addStatus("侧边栏筛选");
+                this.addStatus("丰富筛选库，优化界面");
                 this.addStatus("点击地图自动筛选功能");
                 this.addStatus("");
                 //this.addStatus("开发者:ZachXia,Vitech");
@@ -451,6 +478,14 @@
                 },
 
 
+                getCookies:function() {
+                    console.log(Cookies.get("radar_settings"));
+                    if (typeof(Cookies.get("radar_settings")) != "undefined")
+                        this.settings = Cookies.getJSON("radar_settings");
+                },
+                flashCookies:function(){
+                    Cookies.set("radar_settings",this.settings);
+                },
                 debug: function () {
                     $("#status").toggle();
                 },
@@ -485,7 +520,7 @@
                         this.clickMarker.setIcon(icon);
                     }
 
-                    if (this.auto_search) {
+                    if (this.settings.auto_search) {
                         this.getYaolingInfo();
                     }
                     
@@ -1015,21 +1050,30 @@
                 fit:function() {
                     
                     var ans = [];
-                    if (this.fit_all) {
+                    if (this.settings.fit.all) {
                         ans = ["special"];
                         return ans;
                     }
 
-                    if (this.fit_t1) ans = _.union(ans,this.filter_t1);
-                    if (this.fit_t2) ans = _.union(ans,this.filter_t2);
-                    if (this.fit_nest) ans = _.union(ans,this.filter_nest);
-                    if (this.fit_fish) ans = _.union(ans,this.filter_fish);
-                    if (this.fit_rare) ans = _.union(ans,this.filter_rare);
+                    if (this.settings.fit.t1) ans = _.union(ans,this.filter_t1);
+                    if (this.settings.fit.t2) ans = _.union(ans,this.filter_t2);
+                    if (this.settings.fit.nest) ans = _.union(ans,this.filter_nest);
+                    if (this.settings.fit.fish) ans = _.union(ans,this.filter_fish);
+                    if (this.settings.fit.rare) ans = _.union(ans,this.filter_rare);
+                    if (this.settings.fit.feature) ans = _.union(ans,this.filter_feature);
+                    if (this.settings.fit.element) ans = _.union(ans,this.filter_element);
 
                     return ans;
                 }
             },
+            
         })
+        app.$watch('settings', function(newV,oldV) {
+            console.log(111);
+            app.flashCookies();
+        }, {
+            deep: true
+        });
     </script>
 </body>
 

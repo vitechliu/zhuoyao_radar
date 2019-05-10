@@ -12,7 +12,7 @@
 #### 步骤
 
 1.安装 [酷Q Air](https://cqp.cc/t/23253) 机器人，用小号配置成功；   
-2.安装 [Newbe.Mahua](http://www.newbe.pro/2019/01/25/Newbe.Mahua/Start-With-Mahua-In-V2.0) 框架，并根据教程打开插件；   
+2.安装 [Newbe.Mahua](http://www.newbe.pro/2019/01/25/Newbe.Mahua/Start-With-Mahua-In-V2.0/) 框架，并根据教程打开插件；   
 3.在本地运行php开发环境（如xampp,lnmp)等，并将项目目录设为根目录；  
 4.浏览器运行127.0.0.1(或localhost)，F12 控制台执行以下配置即可开启；
 ```

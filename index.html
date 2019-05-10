@@ -476,14 +476,14 @@
                     this.botMode = true;
                     this.botInterval = setInterval(() => {
                         this.botCheck();
-                    }, 30000);
+                    }, 20000);
                 },
 
                 botCheck: function () {
                     this.getYaolingBot();
                     console.log(this.botTime);
                     if (this.botTime == 1) {
-                        //this.ajaxGroupMessage("北邮捉妖扫描系统启动");
+                        this.ajaxGroupMessage("捉妖扫描机器人2.0启动~有什么问题可以@我哦");
                     }
                 },
                 botAnalyze:function(yaolings) {
@@ -493,19 +493,19 @@
 
                         if ($.inArray(ti.sprite_id, this.filter_bot) == -1) continue;
 
-                        var time = new Date() - new Date(ti.gentime*1000);
-                        var second = time / 1000;
-                        var minute = Math.floor(second / 60);
-                        var second = Math.floor(second % 60);
-                        
-                        var fintime = minute+"分"+second+"秒";
-
+                
                         var yaoling_hash = ti.gentime.toString()+ti.latitude.toString();
 
                         if ($.inArray(yaoling_hash,this.botChecked) >= 0) continue;
                         
                         this.botChecked.push(yaoling_hash);
                         var yl = this.getYaoling(ti.sprite_id);
+
+                        var time = new Date((ti.gentime+ti.lifetime)*1000) - new Date();
+                        var second = time / 1000;
+                        var minute = Math.floor(second / 60);
+                        var second = Math.floor(second % 60);
+                        var fintime = minute+"分"+second+"秒";
 
                         geocoder = new qq.maps.Geocoder({
                             complete: result => {
@@ -537,7 +537,7 @@
                 ajaxGroupMessage:function(mes) {
                     // console.log(mes);
                     // return;
-                    $.post("request.php",{
+                    $.post("bot/request.php",{
                             "qq": this.botGroup,
                             "msg": mes
                         },function(data){

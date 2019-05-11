@@ -44,8 +44,8 @@ module.exports = {
     index: ['./src/index']
   },
   output: {
-    path: '/',
-    publicPath: '/',
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: process.env.NODE_ENV === 'development' ? '/' : './dist',
     filename: '[name].js',
     chunkFilename: '[name].js'
   },
@@ -104,7 +104,7 @@ module.exports = {
   plugins: [new VueLoaderPlugin()].concat(
     new HtmlWebpackPlugin({
       env: process.env.NODE_ENV,
-      filename: 'index.html',
+      filename: process.env.NODE_ENV === 'development' ? 'index.html' : '../index.html',
       template: './src/index.html'
     })
   )

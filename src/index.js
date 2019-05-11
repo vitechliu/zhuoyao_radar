@@ -4,6 +4,7 @@
  * desc:
  */
 import Vue from 'vue';
+window.$ = window.jQuery = require('jquery');
 import App from './App';
 import Element from 'element-ui';
 import './index.less';
@@ -17,8 +18,4 @@ let vueapp = new Vue({
   components: { App }
 });
 
-window.app = {
-  botSetup:params => {
-    vueapp.$children[0].botSetup(params);
-  }
-};
+window.app = vueapp.$children[0];

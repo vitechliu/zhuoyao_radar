@@ -87,7 +87,7 @@ module.exports = {
     },
     botMessage: function(mes) {
       $.post(
-        'request.php',
+        'bot/request.php',
         {
           qq: this.botGroup,
           msg: mes

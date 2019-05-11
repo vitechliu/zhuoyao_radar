@@ -8,7 +8,9 @@
     "dev": "cross-env NODE_ENV='development' node ./build/dev-server.js",
     "build": "cross-env NODE_ENV='production' node ./build/build.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^3.4.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",

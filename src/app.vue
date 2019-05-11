@@ -296,7 +296,10 @@ export default {
     },
     //根据妖灵信息获取其icon地址
     getHeadImagePath: function(e) {
+      var webpath = "https://hy.gwgo.qq.com/sync/pet/";
       var a = this.getYaolingById(e.sprite_id);
+      return webpath + a.SmallImgPath;
+      
       if (a) {
         return `./original/image/head/${a.ImgName}.png`;
       } else {

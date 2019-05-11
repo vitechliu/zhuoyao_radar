@@ -1,0 +1,223 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+#app,
+#qmap {
+  width: 100%;
+  height: 100%;
+}
+
+#status {
+  position: absolute;
+  color: white;
+  z-index: 49;
+  bottom: 0;
+  left: 0;
+  height: 200px;
+  max-width: 500px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  text-shadow: 0 0 4px black;
+
+  display: none;
+}
+
+#status #info {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+#buttons {
+  position: absolute;
+  z-index: 50;
+  left: 5px;
+  top: 5px;
+}
+
+.el-notification {
+  width: 180px !important;
+  padding: 7px 14px 7px 7px !important;
+  border-radius: 0px !important;
+  border: none !important;
+
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  -webkit-box-shadow: 0 2px 12px 0 rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 2px 12px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.el-notification__content {
+  font-size: 13px;
+  line-height: 18px;
+  margin: 6px 0 0;
+  color: black !important;
+  text-shadow: 0 0 4px white !important;
+  text-align: justify;
+}
+
+.nav-burger {
+  width: 2.1875rem;
+  height: 2.1875rem;
+  position: absolute;
+  right: 0.6875rem;
+  top: 0.3125rem;
+  cursor: pointer;
+  text-align: center;
+  -webkit-display: flex;
+  display: flex;
+  -ms-align-items: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  z-index: 90000;
+}
+.nav-burger button {
+  position: relative;
+  display: block;
+  width: 1.5625rem;
+  height: 0.9375rem;
+  margin: 0 auto;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+  font-size: 0;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  transition: height 0.35s 0.35s, border-color 0.35s 0.35s, transform 0.35s 0s;
+}
+
+.nav-burger button:before,
+.nav-burger button:after {
+  position: absolute;
+  top: 0;
+  display: block;
+  content: '';
+  transition: transform 0.35s;
+  left: 0;
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+  transform: translate(0, -50%);
+  width: 50%;
+  height: 0;
+  background: transparent;
+  top: 50%;
+}
+.nav-burger button:focus {
+  outline: none;
+}
+.nav-burger button:after {
+  left: auto;
+  right: 0;
+  border-left: 1px solid black;
+  border-right: none;
+}
+.nav-burger.active button {
+  height: 0;
+  border-color: transparent;
+  transform: rotate(360deg);
+  transition: all 0.35s 0s, transform 0.7s 0s;
+}
+.nav-burger.active button:before,
+.nav-burger.active button:after {
+  height: 0.78125rem;
+  transition: height 0.35s 0.35s, transform 0.35s 0.35s;
+}
+.nav-burger.active button:before {
+  transform: translate(-0.175rem, -50%) rotate(45deg);
+}
+.nav-burger.active button:after {
+  transform: translate(0.175rem, -50%) rotate(-45deg);
+}
+.side-nav {
+  height: 100%;
+  max-width: 19.0625rem;
+  width: 19.0625rem;
+  position: fixed;
+  z-index: 80000;
+  top: 0;
+  right: 0;
+  background-color: white;
+}
+.side-header {
+  height: 3.6875rem;
+  border-bottom: 10px solid #f3f4f8;
+  padding: 10px;
+}
+.side-content {
+  max-height: 70%;
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+}
+.side-content ul {
+  padding: 0 10px 10px 10px;
+  list-style: none;
+}
+.side-content li {
+  height: 20px;
+  border-bottom: 1px solid #f2f3f3;
+  padding: 10px 5px;
+}
+.side_content li span {
+  font-size: 14px;
+  color: #333;
+}
+.side-content .hr {
+  background-color: #f3f4f8;
+  height: 10px;
+  width: 100%;
+}
+div.el-switch {
+  float: right;
+  margin-right: 10px;
+}
+
+.side-footer {
+  width: 100%;
+  height: 30px;
+  background-color: #f3f4f8;
+  position: absolute;
+  bottom: 0;
+  padding: 10px;
+}
+.black-screen {
+  position: fixed;
+  width: 100%;
+  height: 120%;
+  height: calc(100% + 45px);
+  height: calc(100% + 2.8125rem);
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 70000;
+  top: -2.8125rem;
+}
+.side-enter-active,
+.side-leave-active {
+  transition: opacity 0.5s, right 0.5s;
+}
+.side-enter,
+.side-leave-to {
+  opacity: 0;
+  right: -19.0625rem;
+}
+.black-enter-active,
+.black-leave-active {
+  transition: opacity 0.5s;
+}
+.black-enter,
+.black-leave-to {
+  opacity: 0;
+}
+.burger-wrap {
+  position: absolute;
+  right: 0;
+  bottom: 50px;
+  z-index: 99999;
+}

@@ -266,7 +266,7 @@
                 <div class="side-header">
                     <h2>捉妖雷达 - Web</h2>
                     <p>Version: {{ version }}</p>
-                    <p>捉妖雷达高玩交流群：1025673494</p>
+                    <p>捉妖雷达开发交流群：1025673494</p>
                 </div>
                 <div class="side-content">
                     <div class="header" style="font-size:18px;padding-left:10px;padding-top:5px;">筛选</div>
@@ -386,7 +386,7 @@
 
 
                 currVersion: "sprite_0e4ebf1344bf35582f7504ee265f32eb.json", //190508版本的json 如果有变动手动更新
-                version: "v0.6.509.1450",
+                version: "v0.7.510.2157",
                 location: {
                     longitude: 116.3579177856,
                     latitude: 39.9610780334,
@@ -432,8 +432,14 @@
                 botMode: false,
                 botInterval: null,
                 botTime: 0,
-                botURL:"http://127.0.0.1:36524/api/v1/Cqp/CQ_sendGroupMsg",
+
                 botGroup:"799576270",
+                botWelcomeInfo:"捉妖扫描机器人2.1启动~有什么问题可以@我哦",
+                botLocation:{
+                    longitude: 116.3579177856,
+                    latitude: 39.9610780334,
+                },
+
                 botChecked:[],
 
                 showMenu:false,
@@ -452,14 +458,22 @@
                 this.addStatus("捉妖雷达Web版");
                 this.addStatus("版本:" + this.version);
                 this.addStatus("更新日志:");
-                this.addStatus("丰富筛选库，优化界面");
+                this.addStatus("加入qq机器人功能");
                 this.addStatus("点击地图自动筛选功能");
                 this.addStatus("");
                 //this.addStatus("开发者:ZachXia,Vitech");
 
                 setTimeout(() => {
-                    this.notify("提示:点击右下角菜单开始筛选！");
+                    //this.notify("提示:点击右下角菜单开始筛选！");
                 },2000)
+
+                //第一次默认打开菜单
+                this.$nextTick(_ => {
+                    if (typeof(Cookies.get("radar_settings")) == "undefined") {
+                        this.openMenu();
+                    }
+                });
+                    
             },
             methods: {
                 openMenu() {
@@ -468,22 +482,23 @@
 					this.showBlackCover = !this.showBlackCover;
                 },
                 
-                bot_open: function () {
-                    this.location = {
-                        longitude: 116.3579177856,
-                        latitude: 39.9610780334,
-                    };
+                botSetup: function (settings) {
+                    if (settings.hasOwnProperty("qqGroup")) this.botGroup = settings.qqGroup;
+                    if (settings.hasOwnProperty("welcome")) this.botWelcomeInfo = settings.welcome;
+                    if (settings.hasOwnProperty("location")) this.botLocation = settings.location;
+
                     this.botMode = true;
+                    this.botCheck();
+                    console.log("捉妖扫描系统启动，20秒扫描一次");
                     this.botInterval = setInterval(() => {
                         this.botCheck();
-                    }, 30000);
+                    }, 20000);
                 },
-
                 botCheck: function () {
-                    this.getYaolingBot();
+                    this.botGetYaoling();
                     console.log(this.botTime);
-                    if (this.botTime == 1) {
-                        //this.ajaxGroupMessage("北邮捉妖扫描系统启动");
+                    if (this.botTime == 1 && this.botWelcomeInfo.length > 0) {
+                        this.botMessage(this.botWelcomeInfo);
                     }
                 },
                 botAnalyze:function(yaolings) {
@@ -493,13 +508,7 @@
 
                         if ($.inArray(ti.sprite_id, this.filter_bot) == -1) continue;
 
-                        var time = new Date() - new Date(ti.gentime*1000);
-                        var second = time / 1000;
-                        var minute = Math.floor(second / 60);
-                        var second = Math.floor(second % 60);
-                        
-                        var fintime = minute+"分"+second+"秒";
-
+                
                         var yaoling_hash = ti.gentime.toString()+ti.latitude.toString();
 
                         if ($.inArray(yaoling_hash,this.botChecked) >= 0) continue;
@@ -507,10 +516,19 @@
                         this.botChecked.push(yaoling_hash);
                         var yl = this.getYaoling(ti.sprite_id);
 
+                        var time = new Date((ti.gentime+ti.lifetime)*1000) - new Date();
+                        var second = time / 1000;
+                        var minute = Math.floor(second / 60);
+                        var second = Math.floor(second % 60);
+                        var fintime = minute+"分"+second+"秒";
+
                         geocoder = new qq.maps.Geocoder({
                             complete: result => {
-                                var msg = "发现一只"+yl.Name+",位于"+result.detail.address+",剩余时间:"+fintime;
-                                this.ajaxGroupMessage(msg);
+                                var pois = result.detail.nearPois,pos;
+                                if (pois.length > 0) pos = pois[0].name;
+                                else pos = result.detail.address;
+                                var msg = "发现一只"+yl.Name+",位于"+pos+",剩余时间:"+fintime;
+                                this.botMessage(msg);
                             }
                         });
                         
@@ -525,19 +543,19 @@
                     }
                     
                 },
-                // botMessage:function(monsters) {
-                //     for (var i=0;i<monsters.length;i++){
-                //         var mi = monsters[i];
-                        
-                //         var generateMessage = "123123";
-                //         this.ajaxGroupMessage(generateMessage);
-                //     }
-                // },
-
-                ajaxGroupMessage:function(mes) {
-                    // console.log(mes);
-                    // return;
-                    $.post("request.php",{
+                botGetYaoling: function () {
+                    this.botTime++;
+                    var e = {
+                        request_type: "1001",
+                        longtitude: this.convertLocation(this.botLocation.longitude),
+                        latitude: this.convertLocation(this.botLocation.latitude),
+                        requestid: this.genRequestId("1001"),
+                        platform: 0
+                    };
+                    this.sendMessage(e, "1001");
+                },
+                botMessage:function(mes) {
+                    $.post("bot/request.php",{
                             "qq": this.botGroup,
                             "msg": mes
                         },function(data){
@@ -547,9 +565,11 @@
 
 
                 getCookies:function() {
-                    console.log(Cookies.get("radar_settings"));
-                    if (typeof(Cookies.get("radar_settings")) != "undefined")
+                    
+                    if (typeof(Cookies.get("radar_settings")) != "undefined") {
                         this.settings = Cookies.getJSON("radar_settings");
+                    } 
+                        
                 },
                 flashCookies:function(){
                     Cookies.set("radar_settings",this.settings);
@@ -598,17 +618,6 @@
                 getYaolings: function () {
 
                     var url = "https://hy.gwgo.qq.com/sync/pet/config/" + this.currVersion;
-                    // try {
-                    //     $.getJSON(url,result => {
-                    //         console.log(result);
-                    //         this.statusOK = true;
-                    //     });
-                    //     console.log("1");
-                    // } catch(e) {
-                    //     console.log(e);
-                    //     console.log("3");
-                    // }
-                    // console.log("2");
 
                     this.yaolings = tempdata.Data;
 
@@ -1069,17 +1078,7 @@
                     this.sendMessage(e, "1002");
                 },
 
-                getYaolingBot: function () {
-                    this.botTime++;
-                    var e = {
-                        request_type: "1001",
-                        longtitude: this.convertLocation(this.location.longitude),
-                        latitude: this.convertLocation(this.location.latitude),
-                        requestid: this.genRequestId("1001"),
-                        platform: 0
-                    };
-                    this.sendMessage(e, "1001");
-                },
+                
                 getYaoling: function (n) {
                     for (var g = this.yaolings, p = 0; p < g.length; p++)
                         if (g[p].Id == n) return g[p];

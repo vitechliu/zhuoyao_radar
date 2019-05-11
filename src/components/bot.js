@@ -6,28 +6,37 @@
 
 module.exports = {
   methods: {
-    bot_open: function() {
-      this.location = {
-        longitude: 116.3579177856,
-        latitude: 39.9610780334
-      };
-      this.botMode = true;
-      this.botInterval = setInterval(() => {
+    botSetup: function (settings) {
+        if (settings.hasOwnProperty("qqGroup")) this.botGroup = settings.qqGroup;
+        if (settings.hasOwnProperty("welcome")) this.botWelcomeInfo = settings.welcome;
+        if (settings.hasOwnProperty("location")) this.botLocation = settings.location;
+
+        this.botMode = true;
         this.botCheck();
-      }, 30000);
+        this.botInterval = setInterval(() => {
+            this.botCheck();
+        }, 20000);
     },
     botCheck: function() {
-      this.getYaolingBot();
-      console.log(this.botTime);
-      if (this.botTime == 1) {
-        //this.ajaxGroupMessage("北邮捉妖扫描系统启动");
+      this.botGetYaoling();
+      if (this.botTime == 1 && this.botWelcomeInfo.length > 0) {
+        this.botMessage(this.botWelcomeInfo);
       }
     },
     botAnalyze: function(yaolings) {
       for (var i = 0; i < yaolings.length; i++) {
         var ti = yaolings[i];
 
-        if (this.filter_bot.indexOf(ti.sprite_id) === -1) {
+        const FILTER_BOT = [
+          // 告警机器人使用
+          2000106, // 风雪虎
+          2000313, // 银角小妖
+          2000327, // 小蝙蝠
+          2000265, // 香玉
+          2000238 // 颜如玉
+        ];
+
+        if (FILTER_BOT.indexOf(ti.sprite_id) === -1) {
           continue;
         }
 
@@ -49,14 +58,11 @@ module.exports = {
 
         geocoder = new qq.maps.Geocoder({
           complete: result => {
-            var msg =
-              '发现一只' +
-              yl.Name +
-              ',位于' +
-              result.detail.address +
-              ',剩余时间:' +
-              fintime;
-            this.ajaxGroupMessage(msg);
+            var pois = result.detail.nearPois,pos;
+            if (pois.length > 0) pos = pois[0].name;
+            else pos = result.detail.address;
+            var msg = "发现一只"+yl.Name+",位于"+pos+",剩余时间:"+fintime;
+            this.botMessage(msg);
           }
         });
 
@@ -66,14 +72,31 @@ module.exports = {
 
         continue;
       }
-    }
-    // botMessage:function(monsters) {
-    //     for (var i=0;i<monsters.length;i++){
-    //         var mi = monsters[i];
+    },
+    botGetYaoling: function() {
+      const convertLocation = n => parseInt(1e6 * n.toFixed(6));
+      this.botTime++;
+      var e = {
+        request_type: '1001',
+        longtitude: convertLocation(this.botLocation.longitude),
+        latitude: convertLocation(this.botLocation.latitude),
+        requestid: this.genRequestId('1001'),
+        platform: 0
+      };
+      this.sendMessage(e, '1001');
+    },
+    botMessage: function(mes) {
+      $.post(
+        'request.php',
+        {
+          qq: this.botGroup,
+          msg: mes
+        },
+        function(data) {
+          console.log(data);
+        }
+      );
+    },
 
-    //         var generateMessage = "123123";
-    //         this.ajaxGroupMessage(generateMessage);
-    //     }
-    // },
   }
 };

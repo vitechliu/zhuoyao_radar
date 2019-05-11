@@ -1,8 +1,10 @@
 import tempdata from './components/tempdata';
 
 const CUR_YAOLING_VERSION = 'sprite_0e4ebf1344bf35582f7504ee265f32eb.json'; // 妖灵数据库版本，如果与官方版本不一致，需要手动更新
-const APP_VERSION = 'v0.6.509.1450'; // 地图版本
+const APP_VERSION = 'v0.8.511.1820'; // 地图版本
 const API_KEY = '2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3'; // 地图 api key
+
+const SUBSCRIBERS = ["落殇"];
 
 const FILTER = {
   FILTER_RARE: [

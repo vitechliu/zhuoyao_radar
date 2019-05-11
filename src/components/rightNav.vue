@@ -80,6 +80,10 @@
   </div>
 </template>
 <script>
+import {
+  getSetting,
+} from './util';
+
 export default {
   name: 'radar-right-nav',
   props: {
@@ -96,6 +100,12 @@ export default {
     return {
       showMenu: false
     };
+  },
+  mounted:function(){
+    let settings = getSetting();
+    if (!settings) {
+      this.openMenu();
+    }
   },
   methods: {
     openMenu() {

@@ -11,8 +11,14 @@ import '../node_modules/element-ui/lib/theme-chalk/index.css';
 
 Vue.use(Element, { size: 'medium' });
 
-new Vue({
+let vueapp = new Vue({
   el: '#root',
   template: '<App/>',
   components: { App }
 });
+
+window.app = {
+  botSetup:params => {
+    vueapp.$children[0].botSetup(params);
+  }
+};

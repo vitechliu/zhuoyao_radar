@@ -1,6 +1,6 @@
 /*
- * @Date: 2019-05-11 15:02:18 
- * @Last Modified time: 2019-05-11 15:02:18 
+ * @Date: 2019-05-11 15:02:18
+ * @Last Modified time: 2019-05-11 15:02:18
  * @Desc: mixins
  */
 
@@ -17,54 +17,67 @@ module.exports = {
       });
     },
     /**
-     * 初始化地图
+     * 根据id获取妖灵信息
      */
-    initMap() {
-      this.map = new qq.maps.Map(document.getElementById('qmap'), {
-        center: new qq.maps.LatLng(
-          this.location.latitude,
-          this.location.longitude
-        ),
-        zoom: 16 // 地图的中心地理坐标。
+    getYaolingById: function(id) {
+      return this.yaolings.find(item => {
+        return item.Id === id;
       });
-
-      qq.maps.event.addListener(this.map, 'click', this.clickMap);
     },
-    clickMap: function(e) {
-      this.notify('位置已重置,请重新筛选');
-      this.location.longitude = e.latLng.lng;
-      this.location.latitude = e.latLng.lat;
-      var icon = new qq.maps.MarkerImage(
-        'original/image/icon/notify-arrow.png',
-        null,
-        null,
-        null,
-        new qq.maps.Size(40, 40)
-      );
-      if (this.clickMarker) {
-        this.clickMarker.setPosition(
-          new qq.maps.LatLng(e.latLng.lat, e.latLng.lng)
-        );
+    /**
+     * 根据妖灵信息获取头像
+     */
+    getHeadImagePath: function(e) {
+      var a = this.getYaolingById(e.sprite_id);
+      if (a) {
+        return `./original/image/head/${a.ImgName}.png`;
       } else {
-        this.clickMarker = new qq.maps.Marker({
-          position: new qq.maps.LatLng(e.latLng.lat, e.latLng.lng),
-          map: this.map
-        });
-        this.clickMarker.setIcon(icon);
-      }
-
-      if (this.settings.auto_search) {
-        this.getYaolingInfo();
+        return './original/image/default-head.png';
       }
     },
     /**
-     * 清除标记
+     * 处理消息
      */
-    clearAllMarkers: function() {
-      for (var i = 0; i < this.markers.length; i++) {
-        this.markers[i].setMap(null);
+    handleMessage: function(data) {
+      var _type = this.messageMap.get(`msg_${data.requestid}`);
+      if (_type) {
+        this.messageMap.delete(`msg_${data.requestid}`);
       }
-      this.markers = [];
+
+      switch (_type) {
+        case '10041':
+          this.getVersionFileName(data.filename);
+          break;
+        case '10040':
+          //console.log("妖灵等级", n), a.saveBossStartAndEndLevel(n.startlevel, n.endlevel);
+          break;
+        case '1001':
+          console.log(
+            '获取到妖灵数量',
+            data.sprite_list ? data.sprite_list.length : 0
+          );
+          if (this.botMode) {
+            // 机器人
+            this.botAnalyze(data.sprite_list);
+          } else {
+            this.buildMarkersByData(data.sprite_list);
+          }
+          break;
+        case '1002':
+        //this.getLeitaiNearby(data);
+      }
+    },
+    /**
+     * 获取最新的妖灵数据库
+     */
+    getVersionFileName: function(name) {
+      if (name != this.currVersion) {
+        this.getYaolings(name);
+        console.info('有新版本的icon!');
+        this.notify('有新版本的妖灵库，请通知作者更新！！');
+      } else {
+        this.getYaolings(this.currVersion);
+      }
     },
     /**
      * 获取用户位置信息

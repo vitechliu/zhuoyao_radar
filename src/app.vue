@@ -15,11 +15,13 @@
 <script>
 import tempdata from './components/tempdata';
 import mixins from './components/mixins';
+import map from './components/map';
+
 import RadarWebSocket from './components/socket';
 import RightNav from './components/rightNav';
 import {
-  getSetting,
-  setSetting,
+  getLocalStorage,
+  setLocalStorage,
   utf8ByteToUnicodeStr,
   convertLocation,
   json2buffer
@@ -35,12 +37,20 @@ import {
 
 export default {
   name: 'zhuoyao-radar',
-  mixins: [mixins],
+  mixins: [mixins, map],
   components: {
     RightNav
   },
   data() {
+    let location = getLocalStorage('radar_location');
+    if (!location) {
+      location = {
+        longitude: 116.3579177856,
+        latitude: 39.9610780334
+      };
+    }
     return {
+      location,
       APP_VERSION,
       showNav: false, // 左侧菜单栏
       unknownKey: [],
@@ -52,10 +62,6 @@ export default {
       userMarker: null, // 用户位置标记
       firstTime: true, // 首次连接socket标记
       currVersion: CUR_YAOLING_VERSION, //190508版本的json 如果有变动手动更新
-      location: {
-        longitude: 116.3579177856,
-        latitude: 39.9610780334
-      },
       statusOK: false,
       yaolings: tempdata.Data,
       markers: [],
@@ -82,7 +88,7 @@ export default {
     };
   },
   created() {
-    let settings = getSetting();
+    let settings = getLocalStorage('radar_settings');
     if (settings) {
       this.settings = settings;
     }
@@ -147,7 +153,6 @@ export default {
         }
       );
     },
-
     /**
      * 跨域获取最新妖灵数据
      */
@@ -210,44 +215,6 @@ export default {
         fileReader.readAsArrayBuffer(blob);
       }
     },
-    /**
-     * 处理消息
-     */
-    handleMessage: function(data) {
-      var _type = this.messageMap.get(`msg_${data.requestid}`);
-      if (_type) {
-        this.messageMap.delete(`msg_${data.requestid}`);
-      }
-
-      switch (_type) {
-        case '10041':
-          this.getVersionFileName(data.filename);
-          break;
-        case '10040':
-          //console.log("妖灵等级", n), a.saveBossStartAndEndLevel(n.startlevel, n.endlevel);
-          break;
-        case '1001':
-          console.log('获取到妖灵数量', data.sprite_list.length);
-          if (this.botMode) {
-            // 机器人
-            this.botAnalyze(data.sprite_list);
-          } else {
-            this.buildMarkersByData(data.sprite_list);
-          }
-          break;
-        case '1002':
-        //this.getLeitaiNearby(data);
-      }
-    },
-    getVersionFileName: function(name) {
-      if (name != this.currVersion) {
-        this.getYaolings(name);
-        console.info('有新版本的icon!');
-        this.notify('有新版本的妖灵库，请通知作者更新！！');
-      } else {
-        this.getYaolings(this.currVersion);
-      }
-    },
 
     /**
      * 根据查询结果过滤数据，打标记
@@ -260,44 +227,12 @@ export default {
           this.fit[0] === 'special' ||
           this.fit.indexOf(item.sprite_id) > -1
         ) {
-          var m = this.buildSpiteMarker(item);
-          var icon = new qq.maps.MarkerImage(
-            m.iconPath,
-            null,
-            null,
-            null,
-            new qq.maps.Size(40, 40)
-          );
-          var marker = new qq.maps.Marker({
-            position: new qq.maps.LatLng(m.latitude, m.longitude),
-            map: this.map
-          });
-          marker.setIcon(icon);
-
-          this.markers.push(marker);
+          this.addMarkers(item);
         }
       });
       this.notify('筛选成功!');
     },
-    buildSpiteMarker: function(ti) {
-      var icon = this.getHeadImagePath(ti);
-      return {
-        latitude: ti.latitude / 1e6,
-        longitude: ti.longtitude / 1e6,
-        iconPath: icon,
-        width: 40,
-        height: 40
-      };
-    },
-    //根据妖灵信息获取其icon地址
-    getHeadImagePath: function(e) {
-      var a = this.getYaolingById(e.sprite_id);
-      if (a) {
-        return `./original/image/head/${a.ImgName}.png`;
-      } else {
-        return './original/image/default-head.png';
-      }
-    },
+
     addStatusWithoutNewline: function(str) {
       this.status += str;
     },
@@ -355,11 +290,6 @@ export default {
       };
       this.sendMessage(e, '1001');
     },
-    getYaolingById: function(id) {
-      return this.yaolings.find(item => {
-        return item.Id === id;
-      });
-    },
     getSettingFileName: function() {
       var e = {
         request_type: '1004',
@@ -378,6 +308,13 @@ export default {
         platform: 0
       };
       this.sendMessage(e, '10040');
+    },
+    /**
+     * 地图中心改变
+     */
+    mapCenterChanged(position) {
+      console.log('update radar_location');
+      setLocalStorage('radar_location', this.location);
     }
   },
   computed: {
@@ -402,7 +339,7 @@ export default {
     settings: {
       handler: function(newV, oldV) {
         console.log('settings update...');
-        setSetting(this.settings);
+        setLocalStorage('radar_settings', this.settings);
       },
       deep: true
     }

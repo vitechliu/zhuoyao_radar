@@ -33,6 +33,13 @@ let babelrc = {
   ],
   plugins: [
     '@babel/plugin-transform-runtime',
+    [
+      'component',
+      {
+        libraryName: 'element-ui',
+        styleLibraryName: 'theme-chalk'
+      }
+    ],
     '@babel/plugin-transform-modules-commonjs',
     '@babel/plugin-syntax-dynamic-import'
   ]
@@ -104,7 +111,8 @@ module.exports = {
   plugins: [new VueLoaderPlugin()].concat(
     new HtmlWebpackPlugin({
       env: process.env.NODE_ENV,
-      filename: process.env.NODE_ENV === 'development' ? 'index.html' : '../index.html',
+      filename:
+        process.env.NODE_ENV === 'development' ? 'index.html' : '../index.html',
       template: './src/index.html'
     })
   )

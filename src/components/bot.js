@@ -37,6 +37,7 @@ module.exports = {
           2000327, // 小蝙蝠
           2000265, // 香玉
           2000238, // 颜如玉
+
         ];
 
         if (FILTER_BOT.indexOf(ti.sprite_id) === -1) {
@@ -71,7 +72,7 @@ module.exports = {
           }
         });
 
-        var coord = new qq.maps.LatLng(ti.latitude / 1e6, ti.longitude / 1e6);
+        var coord = new qq.maps.LatLng(ti.latitude / 1e6, ti.longtitude / 1e6);
 
         geocoder.getAddress(coord);
 

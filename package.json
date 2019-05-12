@@ -20,6 +20,7 @@
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.1.2",
     "babel-loader": "^8.0.4",
+    "babel-plugin-component": "^1.1.1",
     "chalk": "^2.0.1",
     "core-js": "^2.6.5",
     "cross-env": "^5.2.0",

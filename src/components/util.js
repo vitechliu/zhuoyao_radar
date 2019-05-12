@@ -4,16 +4,16 @@
  * @Desc: 工具
  */
 
-const getSetting = () => {
-  if (localStorage && localStorage['radar_settings']) {
-    return JSON.parse(localStorage['radar_settings']);
+const getLocalStorage = key => {
+  if (localStorage && localStorage[key]) {
+    return JSON.parse(localStorage[key]);
   } else {
     return null;
   }
 };
-const setSetting = setting => {
+const setLocalStorage = (key, value) => {
   if (localStorage) {
-    localStorage['radar_settings'] = JSON.stringify(setting);
+    localStorage[key] = JSON.stringify(value);
   }
 };
 
@@ -86,8 +86,8 @@ const abc1 = e => {
   return r;
 };
 module.exports = {
-  getSetting,
-  setSetting,
+  getLocalStorage,
+  setLocalStorage,
   utf8ByteToUnicodeStr,
   convertLocation,
   json2buffer

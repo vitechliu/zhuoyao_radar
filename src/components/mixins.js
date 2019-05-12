@@ -88,7 +88,7 @@ module.exports = {
           navigator.geolocation.getCurrentPosition(
             position => {
               resolve({
-                longtitude: position.coords.longtitude,
+                longitude: position.coords.longitude,
                 latitude: position.coords.latitude
               });
             },

@@ -6,16 +6,18 @@
 
 module.exports = {
   methods: {
-    botSetup: function (settings) {
-        if (settings.hasOwnProperty("qqGroup")) this.botGroup = settings.qqGroup;
-        if (settings.hasOwnProperty("welcome")) this.botWelcomeInfo = settings.welcome;
-        if (settings.hasOwnProperty("location")) this.botLocation = settings.location;
+    botSetup: function(settings) {
+      if (settings.hasOwnProperty('qqGroup')) this.botGroup = settings.qqGroup;
+      if (settings.hasOwnProperty('welcome'))
+        this.botWelcomeInfo = settings.welcome;
+      if (settings.hasOwnProperty('location'))
+        this.botLocation = settings.location;
 
-        this.botMode = true;
+      this.botMode = true;
+      this.botCheck();
+      this.botInterval = setInterval(() => {
         this.botCheck();
-        this.botInterval = setInterval(() => {
-            this.botCheck();
-        }, 20000);
+      }, 20000);
     },
     botCheck: function() {
       this.botGetYaoling();
@@ -58,15 +60,17 @@ module.exports = {
 
         geocoder = new qq.maps.Geocoder({
           complete: result => {
-            var pois = result.detail.nearPois,pos;
+            var pois = result.detail.nearPois,
+              pos;
             if (pois.length > 0) pos = pois[0].name;
             else pos = result.detail.address;
-            var msg = "发现一只"+yl.Name+",位于"+pos+",剩余时间:"+fintime;
+            var msg =
+              '发现一只' + yl.Name + ',位于' + pos + ',剩余时间:' + fintime;
             this.botMessage(msg);
           }
         });
 
-        var coord = new qq.maps.LatLng(ti.latitude / 1e6, ti.longtitude / 1e6);
+        var coord = new qq.maps.LatLng(ti.latitude / 1e6, ti.longitude / 1e6);
 
         geocoder.getAddress(coord);
 
@@ -78,7 +82,7 @@ module.exports = {
       this.botTime++;
       var e = {
         request_type: '1001',
-        longtitude: convertLocation(this.botLocation.longtitude),
+        longtitude: convertLocation(this.botLocation.longitude),
         latitude: convertLocation(this.botLocation.latitude),
         requestid: this.genRequestId('1001'),
         platform: 0
@@ -87,7 +91,7 @@ module.exports = {
     },
     botMessage: function(mes) {
       $.post(
-        'request.php',
+        'bot/request.php',
         {
           qq: this.botGroup,
           msg: mes
@@ -96,7 +100,6 @@ module.exports = {
           console.log(data);
         }
       );
-    },
-
+    }
   }
 };

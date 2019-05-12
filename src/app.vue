@@ -45,7 +45,7 @@ export default {
     let location = getLocalStorage('radar_location');
     if (!location) {
       location = {
-        longtitude: 116.3579177856,
+        longitude: 116.3579177856,
         latitude: 39.9610780334
       };
     }
@@ -86,7 +86,7 @@ export default {
       botChecked: [],
       botWelcomeInfo: '捉妖扫描机器人2.1启动~有什么问题可以@我哦',
       botLocation: {
-        longtitude: 116.3579177856,
+        longitude: 116.3579177856,
         latitude: 39.9610780334
       }
     };
@@ -110,12 +110,12 @@ export default {
     this.getLocation()
       .then(
         position => {
-          this.location.longtitude = position.longtitude;
+          this.location.longitude = position.longitude;
           this.location.latitude = position.latitude;
 
           var pos = new qq.maps.LatLng(
             this.location.latitude,
-            this.location.longtitude
+            this.location.longitude
           );
           this.map.panTo(pos);
           this.userMarker = new qq.maps.Marker({
@@ -225,7 +225,6 @@ export default {
       });
       this.notify('筛选成功!');
     },
-
     addStatusWithoutNewline: function(str) {
       this.status += str;
     },
@@ -248,7 +247,7 @@ export default {
       if (!this.statusOK || this.botMode) return;
       var e = {
         request_type: '1001',
-        longtitude: convertLocation(this.location.longtitude),
+        longtitude: convertLocation(this.location.longitude),
         latitude: convertLocation(this.location.latitude),
         requestid: this.genRequestId('1001'),
         platform: 0
@@ -265,7 +264,7 @@ export default {
       if (!this.statusOK || this.botMode) return;
       var e = {
         request_type: '1002',
-        longtitude: convertLocation(this.location.longtitude),
+        longtitude: convertLocation(this.location.longitude),
         latitude: convertLocation(this.location.latitude),
         requestid: this.genRequestId('1002'),
         platform: 0

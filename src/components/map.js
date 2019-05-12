@@ -13,7 +13,7 @@ module.exports = {
       this.map = new qq.maps.Map(document.getElementById('qmap'), {
         center: new qq.maps.LatLng(
           this.location.latitude,
-          this.location.longtitude
+          this.location.longitude
         ),
         zoom: 16 // 地图的中心地理坐标。
       });
@@ -30,7 +30,7 @@ module.exports = {
      */
     clickMap(e) {
       this.notify('位置已重置,请重新筛选');
-      this.location.longtitude = e.latLng.lng;
+      this.location.longitude = e.latLng.lng;
       this.location.latitude = e.latLng.lat;
       var icon = new qq.maps.MarkerImage(
         'original/image/icon/notify-arrow.png',

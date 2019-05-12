@@ -13,7 +13,7 @@ module.exports = {
       this.map = new qq.maps.Map(document.getElementById('qmap'), {
         center: new qq.maps.LatLng(
           this.location.latitude,
-          this.location.longitude
+          this.location.longtitude
         ),
         zoom: 16 // 地图的中心地理坐标。
       });
@@ -30,7 +30,7 @@ module.exports = {
      */
     clickMap(e) {
       this.notify('位置已重置,请重新筛选');
-      this.location.longitude = e.latLng.lng;
+      this.location.longtitude = e.latLng.lng;
       this.location.latitude = e.latLng.lat;
       var icon = new qq.maps.MarkerImage(
         'original/image/icon/notify-arrow.png',
@@ -59,11 +59,7 @@ module.exports = {
      * 根据妖灵信息在地图上打个标记
      */
     addMarkers(yl) {
-      console.log('addMarkers', yl);
-      
       let headImage = this.getHeadImagePath(yl);
-
-
       // new icon
       let icon = new qq.maps.MarkerImage(
         headImage,
@@ -73,7 +69,7 @@ module.exports = {
         new qq.maps.Size(40, 40)
       );
       let marker = new qq.maps.Marker({
-        position: new qq.maps.LatLng(yl.latitude, yl.longitude),
+        position: new qq.maps.LatLng(yl.latitude / 1e6, yl.longtitude / 1e6),
         map: this.map
       });
       marker.setIcon(icon);

@@ -30,7 +30,7 @@ module.exports = {
     getHeadImagePath: function(e) {
       var a = this.getYaolingById(e.sprite_id);
       if (a) {
-        return `./original/image/head/${a.ImgName}.png`;
+        return `https://hy.gwgo.qq.com/sync/pet/small/${a.ImgName}.png`;
       } else {
         return './original/image/default-head.png';
       }
@@ -88,7 +88,7 @@ module.exports = {
           navigator.geolocation.getCurrentPosition(
             position => {
               resolve({
-                longitude: position.coords.longitude,
+                longtitude: position.coords.longtitude,
                 latitude: position.coords.latitude
               });
             },

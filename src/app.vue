@@ -15,8 +15,8 @@
 <script>
 import tempdata from './components/tempdata';
 import mixins from './components/mixins';
+import bot from './components/bot';
 import map from './components/map';
-
 import RadarWebSocket from './components/socket';
 import RightNav from './components/rightNav';
 import {
@@ -37,7 +37,7 @@ import {
 
 export default {
   name: 'zhuoyao-radar',
-  mixins: [mixins, map],
+  mixins: [mixins, bot, map],
   components: {
     RightNav
   },
@@ -45,7 +45,7 @@ export default {
     let location = getLocalStorage('radar_location');
     if (!location) {
       location = {
-        longitude: 116.3579177856,
+        longtitude: 116.3579177856,
         latitude: 39.9610780334
       };
     }
@@ -82,18 +82,21 @@ export default {
       botMode: false,
       botInterval: null,
       botTime: 0,
-      botURL: 'http://127.0.0.1:36524/api/v1/Cqp/CQ_sendGroupMsg',
       botGroup: '799576270',
-      botChecked: []
+      botChecked: [],
+      botWelcomeInfo: '捉妖扫描机器人2.1启动~有什么问题可以@我哦',
+      botLocation: {
+        longtitude: 116.3579177856,
+        latitude: 39.9610780334
+      }
     };
   },
-  created() {
+  mounted() {
     let settings = getLocalStorage('radar_settings');
     if (settings) {
       this.settings = settings;
     }
-  },
-  mounted() {
+
     // 初始化地图组件
     this.initMap();
 
@@ -107,12 +110,12 @@ export default {
     this.getLocation()
       .then(
         position => {
-          this.location.longitude = position.longitude;
+          this.location.longtitude = position.longtitude;
           this.location.latitude = position.latitude;
 
           var pos = new qq.maps.LatLng(
             this.location.latitude,
-            this.location.longitude
+            this.location.longtitude
           );
           this.map.panTo(pos);
           this.userMarker = new qq.maps.Marker({
@@ -132,27 +135,17 @@ export default {
       丰富筛选库，优化界面<br/>
       点击地图自动筛选功能<br/>`);
 
+    this.$on('botSetup', params => {
+      this.botSetup(params);
+    });
+    // window.app = {};
+    // window.app.botSetup = this.botSetup;
     //this.addStatus("开发者:ZachXia,Vitech");
-    setTimeout(() => {
-      this.notify('提示:点击右下角菜单开始筛选！');
-    }, 2000);
+    // setTimeout(() => {
+    //   this.notify('提示:点击右下角菜单开始筛选！');
+    // }, 2000);
   },
   methods: {
-    /**
-     * todo
-     */
-    ajaxGroupMessage: function(mes) {
-      $.post(
-        'request.php',
-        {
-          qq: this.botGroup,
-          msg: mes
-        },
-        function(data) {
-          console.log(data);
-        }
-      );
-    },
     /**
      * 跨域获取最新妖灵数据
      */
@@ -255,7 +248,7 @@ export default {
       if (!this.statusOK || this.botMode) return;
       var e = {
         request_type: '1001',
-        longtitude: convertLocation(this.location.longitude),
+        longtitude: convertLocation(this.location.longtitude),
         latitude: convertLocation(this.location.latitude),
         requestid: this.genRequestId('1001'),
         platform: 0
@@ -272,23 +265,12 @@ export default {
       if (!this.statusOK || this.botMode) return;
       var e = {
         request_type: '1002',
-        longtitude: convertLocation(this.location.longitude),
+        longtitude: convertLocation(this.location.longtitude),
         latitude: convertLocation(this.location.latitude),
         requestid: this.genRequestId('1002'),
         platform: 0
       };
       this.sendMessage(e, '1002');
-    },
-    getYaolingBot: function() {
-      this.botTime++;
-      var e = {
-        request_type: '1001',
-        longtitude: convertLocation(this.location.longitude),
-        latitude: convertLocation(this.location.latitude),
-        requestid: this.genRequestId('1001'),
-        platform: 0
-      };
-      this.sendMessage(e, '1001');
     },
     getSettingFileName: function() {
       var e = {
@@ -313,7 +295,6 @@ export default {
      * 地图中心改变
      */
     mapCenterChanged(position) {
-      console.log('update radar_location');
       setLocalStorage('radar_location', this.location);
     }
   },

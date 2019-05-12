@@ -24,38 +24,12 @@
         <div class="side-content">
           <div class="header">筛选</div>
           <ul>
-            <li>
-              <span class="tag">稀有</span>
-              <el-switch v-model="settings.fit.rare"> </el-switch>
-            </li>
-            <li>
-              <span class="tag">1觉</span>
-              <el-switch v-model="settings.fit.t1"> </el-switch>
-            </li>
-            <li>
-              <span class="tag">2觉</span>
-              <el-switch v-model="settings.fit.t2"> </el-switch>
-            </li>
-            <li>
-              <span class="tag">巢穴</span>
-              <el-switch v-model="settings.fit.nest"> </el-switch>
-            </li>
-            <li>
-              <span class="tag">地域</span>
-              <el-switch v-model="settings.fit.feature"> </el-switch>
-            </li>
-            <li>
-              <span class="tag">鲲鲲</span>
-              <el-switch v-model="settings.fit.fish"> </el-switch>
-            </li>
-            <li>
-              <span class="tag">元素</span>
-              <el-switch v-model="settings.fit.element"> </el-switch>
-            </li>
-            <li>
-              <span class="tag">其他所有（慎选）</span>
-              <el-switch v-model="settings.fit.all"> </el-switch>
-            </li>
+            <template v-for="item in filters">
+              <li :key="item.key">
+                <span class="tag">{{item.text}}</span>
+                <el-switch v-model="settings.fit[item.key]"> </el-switch>
+              </li>
+            </template>
           </ul>
           <div class="hr"></div>
           <div class="header">设置</div>
@@ -80,6 +54,8 @@
   </div>
 </template>
 <script>
+import { getLocalStorage } from './util';
+
 export default {
   name: 'radar-right-nav',
   props: {
@@ -94,8 +70,48 @@ export default {
   },
   data() {
     return {
+      filters: [
+        {
+          text: '稀有',
+          key: 'rare'
+        },
+        {
+          text: '1觉',
+          key: 't1'
+        },
+        {
+          text: '2觉',
+          key: 't2'
+        },
+        {
+          text: '巢穴',
+          key: 'nest'
+        },
+        {
+          text: '地域',
+          key: 'feature'
+        },
+        {
+          text: '鲲鲲',
+          key: 'fish'
+        },
+        {
+          text: '元素',
+          key: 'element'
+        },
+        {
+          text: '其他所有（慎选）',
+          key: 'all'
+        }
+      ],
       showMenu: false
     };
+  },
+  mounted: function() {
+    let settings = getLocalStorage('radar_settings');
+    if (!settings) {
+      this.openMenu();
+    }
   },
   methods: {
     openMenu() {

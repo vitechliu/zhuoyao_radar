@@ -6,8 +6,8 @@
     </div>
     <div id="buttons">
       <el-button size="mini" @click="getYaolingInfo">妖灵</el-button>
-      <el-button size="mini" @click="exportPosition">导出位置</el-button>
-      <el-button size="mini" @click="importPosition">导入位置</el-button>
+      <!-- <el-button size="mini" @click="exportPosition">导出位置</el-button>
+      <el-button size="mini" @click="importPosition">导入位置</el-button> -->
       <el-button size="mini" type="warning" @click="debug = !debug">Debug</el-button>
     </div>
     <div id="qmap"></div>

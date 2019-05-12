@@ -19,7 +19,7 @@
         <div class="side-header">
           <h2>捉妖雷达 - Web</h2>
           <p>Version: {{ version }}</p>
-          <p>捉妖雷达高玩交流群：1025673494</p>
+          <p>捉妖雷达开发者群：1025673494</p>
         </div>
         <div class="side-content">
           <div class="header">筛选</div>

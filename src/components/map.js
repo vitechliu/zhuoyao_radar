@@ -6,6 +6,25 @@
 
 module.exports = {
   methods: {
+    exportPosition:function(){
+      var pos = 
+      this.$prompt('请输入标签', '缓存位置', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValidator:value => { 
+          if (value.length == 0) return "请输入标签";
+          return true;
+        }
+      }).then(({ value }) => {
+        this.$message({
+          type: 'success',
+          message: '你的邮箱是: ' + value
+        });
+      });
+    },
+    importPosition:function(){
+
+    },
     /**
      * 初始化地图
      */
@@ -60,6 +79,14 @@ module.exports = {
      */
     addMarkers(yl) {
       let headImage = this.getHeadImagePath(yl);
+
+      var time = new Date((yl.gentime + yl.lifetime) * 1000) - new Date();
+      var second = time / 1000;
+      var minute = Math.floor(second / 60);
+      var second = Math.floor(second % 60);
+
+      var fintime = minute + '分' + second + '秒';
+
       // new icon
       let icon = new qq.maps.MarkerImage(
         headImage,
@@ -68,12 +95,29 @@ module.exports = {
         null,
         new qq.maps.Size(40, 40)
       );
+      let position = new qq.maps.LatLng(yl.latitude / 1e6, yl.longtitude / 1e6);
       let marker = new qq.maps.Marker({
-        position: new qq.maps.LatLng(yl.latitude / 1e6, yl.longtitude / 1e6),
+        position: position,
         map: this.map
       });
+      
+
       marker.setIcon(icon);
       this.markers.push(marker);
+
+      if (this.settings.show_time) {
+        let labelMarker = new qq.maps.Label({
+          position: position,
+          offset: new qq.maps.Size(-20,10),
+          map: this.map,
+          content:fintime,
+          style:{
+            border:"none",
+            backgroundColor:"rgba(255,255,255,.7)",
+          },
+        });
+        this.markers.push(labelMarker);
+      }
     },
     /**
      * 清除标记

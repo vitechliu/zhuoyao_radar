@@ -6,11 +6,12 @@
 import Vue from 'vue';
 window.$ = window.jQuery = require('jquery');
 import App from './App';
-import { Button, Switch, Notification } from 'element-ui';
+import { Button, Switch, Notification,MessageBox } from 'element-ui';
 import './index.less';
 import 'element-ui/lib/theme-chalk/button.css';
 import 'element-ui/lib/theme-chalk/switch.css';
 import 'element-ui/lib/theme-chalk/notification.css';
+import 'element-ui/lib/theme-chalk/message-box.css';
 import 'element-ui/lib/theme-chalk/icon.css';
 
 Vue.prototype.$ELEMENT = { size: 'medium' };

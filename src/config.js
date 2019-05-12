@@ -1,7 +1,7 @@
 import tempdata from './components/tempdata';
 
 const CUR_YAOLING_VERSION = 'sprite_0e4ebf1344bf35582f7504ee265f32eb.json'; // 妖灵数据库版本，如果与官方版本不一致，需要手动更新
-const APP_VERSION = 'v0.8.511.1820'; // 地图版本
+const APP_VERSION = 'v0.9.512.2316'; // 地图版本
 const API_KEY = '2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3'; // 地图 api key
 
 const SUBSCRIBERS = ["落殇"];
@@ -14,8 +14,9 @@ const FILTER = {
     2000265, // 香玉
     2000238, // 颜如玉
     2000109, // 螺莉莉
-    2000078, // 布鲁
-    2000191, // 麻将仔
+    //2000078, // 布鲁 大量出现
+    2000028, //小蝌蚪
+    //2000191, // 麻将仔 大量出现
     2000242, // 夜行枭
     2000147, // 檐上喵
     2000188 // CoCo熊   todo: 檐上喵&CoCo熊官方雷达貌似不提供搜索
@@ -31,7 +32,8 @@ const FILTER = {
     2004010, // 舞狮
     2004007, // 貂宝
     2004004, // 小白蛇
-    2000206 // 麻辣小火锅
+    2000206, // 麻辣小火锅
+    2000182, // 小兵俑
   ],
   FILTER_FISH: [
     2000501, // 咸鱼

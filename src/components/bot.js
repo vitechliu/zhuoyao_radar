@@ -44,7 +44,7 @@ module.exports = {
           continue;
         }
         
-        var time = new Date() - new Date(ti.gentime * 1000);
+        var time = new Date((ti.gentime + ti.lifetime) * 1000) - new Date();
         var second = time / 1000;
         var minute = Math.floor(second / 60);
         var second = Math.floor(second % 60);

@@ -6,7 +6,8 @@
     </div>
     <div id="buttons">
       <el-button size="mini" @click="getYaolingInfo">妖灵</el-button>
-      <el-button size="mini" @click="getLeitaiInfo">擂台(未开发)</el-button>
+      <el-button size="mini" @click="exportPosition">导出位置</el-button>
+      <el-button size="mini" @click="importPosition">导入位置</el-button>
       <el-button size="mini" type="warning" @click="debug = !debug">Debug</el-button>
     </div>
     <div id="qmap"></div>
@@ -42,15 +43,13 @@ export default {
     RightNav
   },
   data() {
-    let location = getLocalStorage('radar_location');
-    if (!location) {
-      location = {
+    
+    
+    return {
+      location:{
         longitude: 116.3579177856,
         latitude: 39.9610780334
-      };
-    }
-    return {
-      location,
+      },
       APP_VERSION,
       showNav: false, // 左侧菜单栏
       unknownKey: [],
@@ -77,7 +76,9 @@ export default {
           feature: false,
           element: false
         },
-        auto_search: false
+        auto_search: false,
+        show_time: true,
+        position_sync:false,
       },
       botMode: false,
       botInterval: null,
@@ -95,8 +96,14 @@ export default {
     let settings = getLocalStorage('radar_settings');
     if (settings) {
       this.settings = settings;
+      if (settings.position_sync) {
+        let location = getLocalStorage('radar_location');
+        if (location) {
+          this.location = location;
+        }
+      }
     }
-
+    
     // 初始化地图组件
     this.initMap();
 
@@ -294,7 +301,11 @@ export default {
      * 地图中心改变
      */
     mapCenterChanged(position) {
-      setLocalStorage('radar_location', this.location);
+      var c = this.map.getCenter();
+      setLocalStorage('radar_location', {
+        longitude:c.lng,
+        latitude:c.lat,
+      });
     }
   },
   computed: {

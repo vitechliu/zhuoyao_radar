@@ -24,6 +24,7 @@ module.exports = {
       }
     },
     botAnalyze: function(yaolings) {
+      
       for (var i = 0; i < yaolings.length; i++) {
         var ti = yaolings[i];
 
@@ -33,13 +34,13 @@ module.exports = {
           2000313, // 银角小妖
           2000327, // 小蝙蝠
           2000265, // 香玉
-          2000238 // 颜如玉
+          2000238, // 颜如玉
         ];
 
         if (FILTER_BOT.indexOf(ti.sprite_id) === -1) {
           continue;
         }
-
+        
         var time = new Date() - new Date(ti.gentime * 1000);
         var second = time / 1000;
         var minute = Math.floor(second / 60);
@@ -49,14 +50,14 @@ module.exports = {
 
         var yaoling_hash = ti.gentime.toString() + ti.latitude.toString();
 
-        if (this.botChecked.indexOf(yaoling_hash) === -1) {
+        if (this.botChecked.indexOf(yaoling_hash) >= 0) {
           continue;
-        }
-
+        } 
+        
         this.botChecked.push(yaoling_hash);
-        var yl = this.getYaoling(ti.sprite_id);
+        var yl = this.getYaolingById(ti.sprite_id);
 
-        geocoder = new qq.maps.Geocoder({
+        var geocoder = new qq.maps.Geocoder({
           complete: result => {
             var pois = result.detail.nearPois,pos;
             if (pois.length > 0) pos = pois[0].name;

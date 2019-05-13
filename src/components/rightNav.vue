@@ -20,6 +20,7 @@
           <h2>捉妖雷达 - Web</h2>
           <p>Version: {{ version }}</p>
           <p>捉妖雷达开发者群：1025673494</p>
+          <p>虚拟定位全家暴毙</p>
           <iframe
             src="https://ghbtns.com/github-btn.html?user=liuzirui1122&repo=zhuoyao_radar&type=star&count=true&size=large"
             frameborder="0"

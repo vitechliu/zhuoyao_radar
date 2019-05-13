@@ -139,8 +139,7 @@ export default {
     this.addStatus(`捉妖雷达Web版 <br/>
       版本:${APP_VERSION} <br/>
       更新日志:<br/>
-      丰富筛选库，优化界面<br/>
-      点击地图自动筛选功能<br/>`);
+      虚拟定位 全家暴毙`);
 
     this.$on('botSetup', params => {
       this.botSetup(params);

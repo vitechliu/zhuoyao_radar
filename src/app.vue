@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <right-nav :version="APP_VERSION" :settings="settings"></right-nav>
+    <right-nav :version="APP_VERSION" :settings="settings" :show-menu.sync="showMenu"></right-nav>
+    <!-- <normal-nav :version="APP_VERSION" :settings="settings" :show-menu="showMenu"></normal-nav> -->
+
     <div id="status" v-show="debug">
       <div id="info"><br/><span v-html="status"></span></div>
     </div>
@@ -20,6 +22,8 @@ import bot from './components/bot';
 import map from './components/map';
 import RadarWebSocket from './components/socket';
 import RightNav from './components/rightNav';
+import NormalNav from './components/normalNav';
+
 import {
   getLocalStorage,
   setLocalStorage,
@@ -40,18 +44,43 @@ export default {
   name: 'zhuoyao-radar',
   mixins: [mixins, bot, map],
   components: {
-    RightNav
+    RightNav,
+    NormalNav
   },
   data() {
-    
-    
-    return {
-      location:{
+    let showMenu = false;
+    let location = getLocalStorage('radar_location');
+    let settings = getLocalStorage('radar_settings');
+    if (!settings) {
+      showMenu = true;
+      settings = {
+        fit: {
+          t1: false,
+          t2: false,
+          all: false,
+          nest: false,
+          rare: true,
+          fish: false,
+          feature: false,
+          element: false
+        },
+        auto_search: false,
+        show_time: true,
+        position_sync: false
+      };
+    }
+
+    if (!(location && settings.position_sync)) {
+      location = {
         longitude: 116.3579177856,
         latitude: 39.9610780334
-      },
+      };
+    }
+    return {
+      location,
+      settings,
+      showMenu,
       APP_VERSION,
-      showNav: false, // 左侧菜单栏
       unknownKey: [],
       status: '',
       socket: {},
@@ -65,21 +94,6 @@ export default {
       yaolings: tempdata.Data,
       markers: [],
       messageMap: new Map(), // 缓存请求类型和id
-      settings: {
-        fit: {
-          t1: false,
-          t2: false,
-          all: false,
-          nest: false,
-          rare: true,
-          fish: false,
-          feature: false,
-          element: false
-        },
-        auto_search: false,
-        show_time: true,
-        position_sync:false,
-      },
       botMode: false,
       botInterval: null,
       botTime: 0,
@@ -93,17 +107,6 @@ export default {
     };
   },
   mounted() {
-    let settings = getLocalStorage('radar_settings');
-    if (settings) {
-      this.settings = settings;
-      if (settings.position_sync) {
-        let location = getLocalStorage('radar_location');
-        if (location) {
-          this.location = location;
-        }
-      }
-    }
-    
     // 初始化地图组件
     this.initMap();
 
@@ -214,7 +217,6 @@ export default {
         fileReader.readAsArrayBuffer(blob);
       }
     },
-
     /**
      * 根据查询结果过滤数据，打标记
      */
@@ -277,6 +279,9 @@ export default {
       };
       this.sendMessage(e, '1002');
     },
+    /**
+     * 
+     */
     getSettingFileName: function() {
       var e = {
         request_type: '1004',
@@ -286,6 +291,9 @@ export default {
       };
       this.sendMessage(e, '10041');
     },
+    /**
+     * 暂未使用
+     */
     getBossLevelConfig: function() {
       return;
       var e = {
@@ -302,8 +310,8 @@ export default {
     mapCenterChanged(position) {
       var c = this.map.getCenter();
       setLocalStorage('radar_location', {
-        longitude:c.lng,
-        latitude:c.lat,
+        longitude: c.lng,
+        latitude: c.lat
       });
     }
   },

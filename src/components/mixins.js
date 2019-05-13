@@ -36,6 +36,20 @@ module.exports = {
       }
     },
     /**
+     * 缓存响应的类型和id
+     */
+    genRequestId: function(type) {
+      let _time = new Date().getTime() % 1234567;
+      this.messageMap.set(`msg_${_time}`, type);
+      return _time;
+    },
+    /**
+     * 根据id找到请求的类型
+     */
+    getRequestTypeFromId: function(id) {
+      return this.messageMap.get(id);
+    },
+    /**
      * 处理消息
      */
     handleMessage: function(data) {

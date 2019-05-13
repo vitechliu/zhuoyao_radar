@@ -6,7 +6,7 @@
 import Vue from 'vue';
 window.$ = window.jQuery = require('jquery');
 import App from './App';
-import { Button, Switch, Notification,MessageBox } from 'element-ui';
+import { Button, Icon, Switch, Notification, MessageBox } from 'element-ui';
 import './index.less';
 import 'element-ui/lib/theme-chalk/button.css';
 import 'element-ui/lib/theme-chalk/switch.css';
@@ -19,6 +19,7 @@ Vue.prototype.$notify = Notification;
 
 Vue.use(Button);
 Vue.use(Switch);
+Vue.use(Icon);
 
 let vueapp = new Vue({
   el: '#root',

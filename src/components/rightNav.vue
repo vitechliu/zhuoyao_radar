@@ -1,10 +1,11 @@
 <template>
-  <div>
+  <div class="setting-nav">
     <div class="burger-wrap">
       <div :class="['nav-burger', showMenu ? 'active' : '']">
-        <button class="menu-toggle" @click.prevent="openMenu">
-          Menu
-        </button>
+        <div class="setting-icon" @click.prevent="openMenu">
+          <i v-if="showMenu" class="el-icon-d-arrow-right"></i>
+          <i v-else class="el-icon-setting"></i>
+        </div>
       </div>
     </div>
     <transition name="black">
@@ -27,7 +28,6 @@
             scrolling="0"
             width="160px"
             height="30px"
-            style="margin-top:5px"
           ></iframe>
         </div>
         <div class="side-content">
@@ -74,9 +74,15 @@ export default {
     settings: {
       type: Object,
       default: {}
+    },
+    showMenu: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
+    let settings = getLocalStorage('radar_settings');
+
     return {
       filters: [
         {
@@ -111,27 +117,24 @@ export default {
           text: '其他所有（慎选）',
           key: 'all'
         }
-      ],
-      showMenu: false
+      ]
     };
-  },
-  mounted: function() {
-    let settings = getLocalStorage('radar_settings');
-    if (!settings) {
-      this.openMenu();
-    }
   },
   methods: {
     openMenu() {
-      this.showMenu = !this.showMenu;
+      this.$emit('update:showMenu', !this.showMenu)
+      // this.showMenu = !this.showMenu;
     }
   }
 };
 </script>
 <style lang="less">
+.setting-nav {
+  font-size: 14px;
+}
 .side-content {
   .header {
-    font-size: 18px;
+    font-size: 16px;
     padding-left: 10px;
     padding-top: 5px;
   }

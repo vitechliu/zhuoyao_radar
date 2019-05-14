@@ -4,9 +4,36 @@ const CUR_YAOLING_VERSION = 'sprite_0e4ebf1344bf35582f7504ee265f32eb.json'; // �
 const APP_VERSION = 'v0.9.512.2316'; // 地图版本
 const API_KEY = '2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3'; // 地图 api key
 
-const SUBSCRIBERS = ["落殇"];
+const SUBSCRIBERS = ['落殇'];
 
 const FILTER = {
+  FILTER_WIDE: [
+    {
+      id: 2000106,
+      name: '风雪虎',
+      on: true
+    },
+    {
+      id: 2000313,
+      name: '银角小妖',
+      on: true
+    },
+    {
+      id: 2000327,
+      name: '小蝙蝠',
+      on: true
+    },
+    {
+      id: 2000265,
+      name: '香玉',
+      on: true
+    },
+    {
+      id: 2000238,
+      name: '颜如玉',
+      on: true
+    }
+  ],
   FILTER_RARE: [
     2000106, // 风雪虎
     2000313, // 银角小妖
@@ -33,7 +60,7 @@ const FILTER = {
     2004007, // 貂宝
     2004004, // 小白蛇
     2000206, // 麻辣小火锅
-    2000182, // 小兵俑
+    2000182 // 小兵俑
   ],
   FILTER_FISH: [
     2000501, // 咸鱼
@@ -68,6 +95,7 @@ const FILTER = {
   })
 };
 const SOCKET = {
+  MSG_INTERVAL: 3000, // 发送消息最小时间间隔
   RECONNECT_TIME: 1000, // 断线重连时间
   URL:
     'wss://publicld.gwgo.qq.com?account_value=0&account_type=0&appid=0&token=0' // 官方妖灵查询接口
@@ -77,11 +105,23 @@ const BOT = {
   URL: 'http://127.0.0.1:36524/api/v1/Cqp/CQ_sendGroupMsg'
 };
 
+// 官方接口每次查询的经纬度范围
+// MAX_RANGE: 以查询点为基准，范围查询的单元格数量
+// 例如MAX_RANGE=10。即是基准东南西北各+10，再加中心线，21*21的单元格数
+const WIDE_SEARCH = {
+  MAX_RANGE: 10, 
+  MAX_SOCKETS: 6, // 最大socket线程数
+  LAT_RANGE: 0.013754, // 单次查询纬度偏移量
+  LNG_RANGE: 0.01795 // 单词查询经度偏移量
+};
+
+
 module.exports = {
   FILTER,
   API_KEY,
   SOCKET,
   CUR_YAOLING_VERSION,
   APP_VERSION,
+  WIDE_SEARCH,
   BOT
 };

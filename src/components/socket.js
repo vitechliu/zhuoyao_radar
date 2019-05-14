@@ -9,11 +9,14 @@ import { SOCKET } from '../config';
 class RadarWebSocket {
   constructor(
     opts = {
+      index: 0,
       onopen: () => {},
       onmessage: () => {}
     }
   ) {
     this.opts = opts;
+    this.index = opts.index || 0;
+
     this.initSocket();
     return this;
   }
@@ -29,8 +32,12 @@ class RadarWebSocket {
       }, SOCKET.RECONNECT_TIME);
     };
 
-    this.socket.onopen = this.opts.onopen;
-    this.socket.onmessage = this.opts.onmessage;
+    this.socket.onopen = event => {
+      this.opts.onopen(event, this);
+    };
+    this.socket.onmessage = event => {
+      this.opts.onmessage(event, this);
+    };
   }
   send(msg) {
     this.socket && this.socket.send(msg);

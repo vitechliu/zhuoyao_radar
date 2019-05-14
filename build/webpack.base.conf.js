@@ -103,7 +103,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: '/fonts/[name].[hash:8].[ext]'
+          name: `${process.env.NODE_ENV === 'development' ? './' : '../dist/'}fonts/[name].[hash:8].[ext]`
         }
       }
     ]

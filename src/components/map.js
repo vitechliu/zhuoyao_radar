@@ -6,13 +6,12 @@
 
 module.exports = {
   methods: {
-    exportPosition:function(){
-      var pos = 
-      this.$prompt('请输入标签', '缓存位置', {
+    exportPosition: function() {
+      var pos = this.$prompt('请输入标签', '缓存位置', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputValidator:value => { 
-          if (value.length == 0) return "请输入标签";
+        inputValidator: value => {
+          if (value.length == 0) return '请输入标签';
           return true;
         }
       }).then(({ value }) => {
@@ -22,9 +21,7 @@ module.exports = {
         });
       });
     },
-    importPosition:function(){
-
-    },
+    importPosition: function() {},
     /**
      * 初始化地图
      */
@@ -100,21 +97,21 @@ module.exports = {
         position: position,
         map: this.map
       });
-      
 
       marker.setIcon(icon);
       this.markers.push(marker);
 
+      // 展示倒计时
       if (this.settings.show_time) {
         let labelMarker = new qq.maps.Label({
           position: position,
-          offset: new qq.maps.Size(-20,10),
+          offset: new qq.maps.Size(-20, 5),
           map: this.map,
-          content:fintime,
-          style:{
-            border:"none",
-            backgroundColor:"rgba(255,255,255,.7)",
-          },
+          content: fintime,
+          style: {
+            border: 'none',
+            backgroundColor: 'rgba(255,255,255,.7)'
+          }
         });
         this.markers.push(labelMarker);
       }

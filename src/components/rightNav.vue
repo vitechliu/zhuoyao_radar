@@ -18,10 +18,11 @@
     <transition name="side">
       <div class="side-nav" v-show="showMenu">
         <div class="side-header">
-          <h2>捉妖雷达 - Web</h2>
-          <p>Version: {{ version }}</p>
+          <h4>捉妖雷达 - Web</h4>
+          <p>{{ version }}</p>
           <p>捉妖雷达开发者群：1025673494</p>
           <p>虚拟定位全家暴毙</p>
+          <br/>
           <iframe
             src="https://ghbtns.com/github-btn.html?user=liuzirui1122&repo=zhuoyao_radar&type=star&count=true&size=large"
             frameborder="0"
@@ -31,31 +32,43 @@
           ></iframe>
         </div>
         <div class="side-content">
-          <div class="header">筛选</div>
-          <ul>
-            <template v-for="item in filters">
-              <li :key="item.key">
-                <span class="tag">{{item.text}}</span>
-                <el-switch v-model="settings.fit[item.key]"> </el-switch>
-              </li>
-            </template>
-          </ul>
+          <div class="nav-filter">
+            <div class="header">筛选{{mode}}</div>
+            <ul v-if="mode === 'normal'">
+              <template v-for="item in filters">
+                <li :key="item.key">
+                  <span class="tag">{{item.text}}</span>
+                  <el-switch v-model="settings.fit[item.key]"> </el-switch>
+                </li>
+              </template>
+            </ul>
+            <ul v-else>
+              <template v-for="item in settings.wide">
+                <li :key="item.id">
+                  <span class="tag">{{item.name}}</span>
+                  <el-switch v-model="item.on"> </el-switch>
+                </li>
+              </template>
+            </ul>
+          </div>
           <div class="hr"></div>
-          <div class="header">设置</div>
-          <ul>
-            <li>
-              <span class="tag">点击地图自动搜索</span>
-              <el-switch v-model="settings.auto_search"> </el-switch>
-            </li>
-            <li>
-              <span class="tag">显示剩余时间</span>
-              <el-switch v-model="settings.show_time"> </el-switch>
-            </li>
-            <li>
-              <span class="tag">记住上次退出位置</span>
-              <el-switch v-model="settings.position_sync"> </el-switch>
-            </li>
-          </ul>
+          <div class="nav-settings">
+            <div class="header">设置</div>
+            <ul>
+              <li>
+                <span class="tag">点击地图自动搜索</span>
+                <el-switch v-model="settings.auto_search"> </el-switch>
+              </li>
+              <li>
+                <span class="tag">显示剩余时间</span>
+                <el-switch v-model="settings.show_time"> </el-switch>
+              </li>
+              <li>
+                <span class="tag">记住上次退出位置</span>
+                <el-switch v-model="settings.position_sync"> </el-switch>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </transition>
@@ -78,6 +91,10 @@ export default {
     showMenu: {
       type: Boolean,
       default: false
+    },
+    mode: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -122,8 +139,10 @@ export default {
   },
   methods: {
     openMenu() {
-      this.$emit('update:showMenu', !this.showMenu)
-      // this.showMenu = !this.showMenu;
+      this.$emit('update:showMenu', !this.showMenu);
+    },
+    handleModeClick() {
+      console.log(this.settings.mode);
     }
   }
 };
@@ -139,4 +158,10 @@ export default {
     padding-top: 5px;
   }
 }
+// .el-tabs__item {
+//   padding: 0 20px !important;
+// }
+// .el-tabs__active-bar{
+//   display: none !important;
+// }
 </style>

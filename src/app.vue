@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <right-nav :version="APP_VERSION" :settings="settings" :show-menu.sync="showMenu"></right-nav>
+    <right-nav :version="APP_VERSION" :settings="settings" :show-menu.sync="showMenu" :mode="mode"></right-nav>
     <!-- <normal-nav :version="APP_VERSION" :settings="settings" :show-menu="showMenu"></normal-nav> -->
 
     <div id="status" v-show="debug">
@@ -13,6 +13,7 @@
       <el-button size="mini" type="warning" @click="debug = !debug">Debug</el-button>
     </div>
     <div id="qmap"></div>
+    <radar-progress :show="progressShow" :percent="progressPercent"></radar-progress>
   </div>
 </template>
 <script>
@@ -20,9 +21,9 @@ import tempdata from './components/tempdata';
 import mixins from './components/mixins';
 import bot from './components/bot';
 import map from './components/map';
-import RadarWebSocket from './components/socket';
 import RightNav from './components/rightNav';
-import NormalNav from './components/normalNav';
+import socketMsg from './components/socketMsg';
+import RadarProgress from './components/radarProgress';
 
 import {
   getLocalStorage,
@@ -37,38 +38,41 @@ import {
   API_KEY,
   CUR_YAOLING_VERSION,
   APP_VERSION,
+  WIDE_SEARCH,
   BOT
 } from './config';
 
 export default {
   name: 'zhuoyao-radar',
-  mixins: [mixins, bot, map],
+  mixins: [mixins, bot, map, socketMsg],
   components: {
     RightNav,
-    NormalNav
+    RadarProgress
   },
   data() {
     let showMenu = false;
     let location = getLocalStorage('radar_location');
     let settings = getLocalStorage('radar_settings');
+    let defaultSettings = {
+      fit: {
+        t1: false,
+        t2: false,
+        all: false,
+        nest: false,
+        rare: true,
+        fish: false,
+        feature: false,
+        element: false
+      },
+      auto_search: false,
+      show_time: true,
+      position_sync: true,
+      wide: FILTER.FILTER_WIDE
+    };
     if (!settings) {
       showMenu = true;
-      settings = {
-        fit: {
-          t1: false,
-          t2: false,
-          all: false,
-          nest: false,
-          rare: true,
-          fish: false,
-          feature: false,
-          element: false
-        },
-        auto_search: false,
-        show_time: true,
-        position_sync: false
-      };
     }
+    settings = Object.assign({}, defaultSettings, settings || {});
 
     if (!(location && settings.position_sync)) {
       location = {
@@ -81,9 +85,10 @@ export default {
       settings,
       showMenu,
       APP_VERSION,
-      unknownKey: [],
+      mode: this.$parent.mode,
+      MAX_SOCKETS: this.$parent.mode === 'normal' ? 1 : WIDE_SEARCH.MAX_SOCKETS,
       status: '',
-      socket: {},
+      sockets: [],
       map: {},
       debug: false,
       clickMarker: null, // 点击位置标记
@@ -103,18 +108,21 @@ export default {
       botLocation: {
         longitude: 116.3579177856,
         latitude: 39.9610780334
-      }
+      },
+      progressShow: false
     };
   },
   mounted() {
     // 初始化地图组件
     this.initMap();
 
-    // 初始化websocket
-    this.socket = new RadarWebSocket({
-      onopen: this.onSocketOpen,
-      onmessage: this.onSocketMessage
-    });
+    this.initSockets();
+
+    // // 初始化websocket
+    // this.socket = new RadarWebSocket({
+    //   onopen: this.onSocketOpen,
+    //   onmessage: this.onSocketMessage
+    // });
 
     // 获取用户位置
     this.getLocation()
@@ -153,6 +161,22 @@ export default {
     // setTimeout(() => {
     //   this.notify('提示:点击右下角菜单开始筛选！');
     // }, 2000);
+
+    // for (let index = 0; index < 450; index++) {
+    //   let a = this.getNextPosition();
+    //   // console.log('getNextPosition', a);
+
+    //   if (a) {
+    //     let fn = n => parseInt(1e6 * n.toFixed(6));
+    //     this.addMarkers({
+    //       gentime: 1557742978,
+    //       latitude: fn(a.latitude),
+    //       lifetime: 3600,
+    //       longtitude: fn(a.longitude),
+    //       sprite_id: 2000112
+    //     });
+    //   }
+    // }
   },
   methods: {
     /**
@@ -188,9 +212,9 @@ export default {
       return this.messageMap.get(id);
     },
 
-    onSocketOpen: function() {
-      this.addStatus('WSS连接开启');
-      console.log('WSS连接开启');
+    onSocketOpen: function(event, socket) {
+      this.addStatus(`WSS-${socket.index}.连接开启`);
+      console.log(`WSS-${socket.index}.连接开启`);
       // 首次连接
       if (this.firstTime) {
         this.firstTime = false;
@@ -201,7 +225,7 @@ export default {
     /**
      * 消息响应
      */
-    onSocketMessage: function(event) {
+    onSocketMessage: function(event, socket) {
       var blob = event.data;
 
       if (typeof blob !== 'string') {
@@ -212,7 +236,8 @@ export default {
 
           var data = JSON.parse(n);
 
-          this.handleMessage(data);
+          console.log(`onSocketMessage${socket.index}`, data);
+          this.handleMessage(data, socket);
         };
         fileReader.readAsArrayBuffer(blob);
       }
@@ -221,17 +246,17 @@ export default {
      * 根据查询结果过滤数据，打标记
      */
     buildMarkersByData: function(t) {
-      this.clearAllMarkers();
-
-      t.forEach(item => {
-        if (
-          this.fit[0] === 'special' ||
-          this.fit.indexOf(item.sprite_id) > -1
-        ) {
-          this.addMarkers(item);
-        }
-      });
-      this.notify('筛选成功!');
+      if (t && t.length) {
+        t.forEach(item => {
+          if (
+            this.fit[0] === 'special' ||
+            this.fit.indexOf(item.sprite_id) > -1
+          ) {
+            this.addMarkers(item);
+          }
+        });
+      }
+      // this.notify('筛选成功!');
     },
     addStatusWithoutNewline: function(str) {
       this.status += str;
@@ -239,28 +264,36 @@ export default {
     addStatus: function(str) {
       this.status += str + '<br>';
     },
-    sendMessage: function(message, requestIndex) {
+    sendMessage: function(message, socketIndex = 0) {
+      console.log('sendMessage', message);
+
+      // let message = this.initSocketMessage(type, options);
       if (message.request_type != '1004') {
         this.addStatusWithoutNewline('WSS发送消息：');
         this.addStatus(JSON.stringify(message));
       }
-      console.log('sendMessage', message);
 
-      this.socket.send(json2buffer(message));
+      this.sockets[socketIndex].send(json2buffer(message));
     },
     /**
      * 获取妖灵数据
      */
     getYaolingInfo: function() {
       if (!this.statusOK || this.botMode) return;
-      var e = {
-        request_type: '1001',
-        longtitude: convertLocation(this.location.longitude),
-        latitude: convertLocation(this.location.latitude),
-        requestid: this.genRequestId('1001'),
-        platform: 0
-      };
-      this.sendMessage(e, '1001');
+
+      // 先清除标记
+      this.clearAllMarkers();
+
+      if (this.mode === 'normal') {
+        this.sendMessage(this.initSocketMessage('1001'));
+      } else {
+        this.progressShow = true;
+        this.lng_count = this.lat_count = 0;
+        for (let index = 0; index < WIDE_SEARCH.MAX_SOCKETS; index++) {
+          let _position = this.getNextPosition(); // 获取下一个查询点
+          this.sendMessage(this.initSocketMessage('1001', _position), index);
+        }
+      }
     },
     /**
      * 获取擂台数据
@@ -270,39 +303,20 @@ export default {
       this.notify('功能开发中!');
       return;
       if (!this.statusOK || this.botMode) return;
-      var e = {
-        request_type: '1002',
-        longtitude: convertLocation(this.location.longitude),
-        latitude: convertLocation(this.location.latitude),
-        requestid: this.genRequestId('1002'),
-        platform: 0
-      };
-      this.sendMessage(e, '1002');
+      this.sendMessage(this.initSocketMessage('1001'));
     },
     /**
-     * 
+     * 获取官方配置文件
      */
     getSettingFileName: function() {
-      var e = {
-        request_type: '1004',
-        cfg_type: 1,
-        requestid: this.genRequestId('10041'),
-        platform: 0
-      };
-      this.sendMessage(e, '10041');
+      this.sendMessage(this.initSocketMessage('10041'));
     },
     /**
      * 暂未使用
      */
     getBossLevelConfig: function() {
       return;
-      var e = {
-        request_type: '1004',
-        cfg_type: 0,
-        requestid: this.genRequestId('10040'),
-        platform: 0
-      };
-      this.sendMessage(e, '10040');
+      this.sendMessage(this.initSocketMessage('10040'));
     },
     /**
      * 地图中心改变
@@ -318,19 +332,31 @@ export default {
   computed: {
     fit: function() {
       let ans = [];
-      let _fit = this.settings.fit;
-      if (_fit.all) {
-        return ['special'];
-      }
-
-      // 根据值把key转换成FILTER_FISH这种，取常量配置中的值
-      for (let _f in _fit) {
-        if (_fit[_f]) {
-          let _arr = FILTER[`FILTER_${_f.toLocaleUpperCase()}`];
-          ans = ans.concat(_arr);
+      if (this.mode === 'normal') {
+        let _fit = this.settings.fit;
+        if (_fit.all) {
+          return ['special'];
         }
+
+        // 根据值把key转换成FILTER_FISH这种，取常量配置中的值
+        for (let _f in _fit) {
+          if (_fit[_f]) {
+            let _arr = FILTER[`FILTER_${_f.toLocaleUpperCase()}`];
+            ans = ans.concat(_arr);
+          }
+        }
+        return Array.from(new Set(ans));
+      } else {
+        let _fit = this.settings.wide
+          .filter(item => item.on)
+          .map(item => item.id);
+        return Array.from(new Set(_fit));
       }
-      return Array.from(new Set(ans));
+    },
+    progressPercent: function() {
+      let maxInLine = WIDE_SEARCH.MAX_RANGE * 2 + 1;
+      let cur = this.lat_count * maxInLine + this.lng_count;
+      return Math.floor(cur / Math.pow(maxInLine, 2) * 100);
     }
   },
   watch: {

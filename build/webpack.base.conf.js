@@ -52,7 +52,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, '../dist'),
-    publicPath: process.env.NODE_ENV === 'development' ? '/' : './dist',
+    publicPath: process.env.NODE_ENV === 'development' ? '/' : '/dist/',
     filename: '[name].js',
     chunkFilename: '[name].js'
   },
@@ -103,7 +103,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: `${process.env.NODE_ENV === 'development' ? './' : '../dist/'}fonts/[name].[hash:8].[ext]`
+          name: `fonts/[name].[hash:8].[ext]`
         }
       }
     ]

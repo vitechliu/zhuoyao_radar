@@ -17,34 +17,27 @@
   </div>
 </template>
 <script>
-import tempdata from './components/tempdata';
-import mixins from './components/mixins';
-import bot from './components/bot';
-import map from './components/map';
+import tempdata from './lib/tempdata';
+import mixins from './mixins/mixins';
+import bot from './mixins/bot';
+import map from './mixins/map';
 import RightNav from './components/rightNav';
-import socketMsg from './components/socketMsg';
+import socket from './mixins/socket';
 import RadarProgress from './components/radarProgress';
 
-import {
-  getLocalStorage,
-  setLocalStorage,
-  utf8ByteToUnicodeStr,
-  convertLocation,
-  json2buffer
-} from './components/util';
+import { getLocalStorage, setLocalStorage } from './lib/util';
 
 import {
   FILTER,
   API_KEY,
   CUR_YAOLING_VERSION,
   APP_VERSION,
-  WIDE_SEARCH,
-  BOT
-} from './config';
+  WIDE_SEARCH
+} from './lib/config';
 
 export default {
   name: 'zhuoyao-radar',
-  mixins: [mixins, bot, map, socketMsg],
+  mixins: [mixins, bot, map, socket],
   components: {
     RightNav,
     RadarProgress
@@ -86,7 +79,6 @@ export default {
       showMenu,
       APP_VERSION,
       mode: this.$parent.mode,
-      MAX_SOCKETS: this.$parent.mode === 'normal' ? 1 : WIDE_SEARCH.MAX_SOCKETS,
       status: '',
       sockets: [],
       map: {},
@@ -116,13 +108,8 @@ export default {
     // 初始化地图组件
     this.initMap();
 
+    // 初始化websocket
     this.initSockets();
-
-    // // 初始化websocket
-    // this.socket = new RadarWebSocket({
-    //   onopen: this.onSocketOpen,
-    //   onmessage: this.onSocketMessage
-    // });
 
     // 获取用户位置
     this.getLocation()
@@ -155,28 +142,6 @@ export default {
     this.$on('botSetup', params => {
       this.botSetup(params);
     });
-    // window.app = {};
-    // window.app.botSetup = this.botSetup;
-    //this.addStatus("开发者:ZachXia,Vitech");
-    // setTimeout(() => {
-    //   this.notify('提示:点击右下角菜单开始筛选！');
-    // }, 2000);
-
-    // for (let index = 0; index < 450; index++) {
-    //   let a = this.getNextPosition();
-    //   // console.log('getNextPosition', a);
-
-    //   if (a) {
-    //     let fn = n => parseInt(1e6 * n.toFixed(6));
-    //     this.addMarkers({
-    //       gentime: 1557742978,
-    //       latitude: fn(a.latitude),
-    //       lifetime: 3600,
-    //       longtitude: fn(a.longitude),
-    //       sprite_id: 2000112
-    //     });
-    //   }
-    // }
   },
   methods: {
     /**
@@ -198,51 +163,6 @@ export default {
       this.statusOK = true;
     },
     /**
-     * 缓存响应的类型和id
-     */
-    genRequestId: function(type) {
-      let _time = new Date().getTime() % 1234567;
-      this.messageMap.set(`msg_${_time}`, type);
-      return _time;
-    },
-    /**
-     * 根据id找到请求的类型
-     */
-    getRequestTypeFromId: function(id) {
-      return this.messageMap.get(id);
-    },
-
-    onSocketOpen: function(event, socket) {
-      this.addStatus(`WSS-${socket.index}.连接开启`);
-      console.log(`WSS-${socket.index}.连接开启`);
-      // 首次连接
-      if (this.firstTime) {
-        this.firstTime = false;
-        this.getSettingFileName();
-        this.getBossLevelConfig();
-      }
-    },
-    /**
-     * 消息响应
-     */
-    onSocketMessage: function(event, socket) {
-      var blob = event.data;
-
-      if (typeof blob !== 'string') {
-        var fileReader = new FileReader();
-        fileReader.onload = e => {
-          var arrayBuffer = e.target.result;
-          var n = utf8ByteToUnicodeStr(new Uint8Array(arrayBuffer).slice(4));
-
-          var data = JSON.parse(n);
-
-          console.log(`onSocketMessage${socket.index}`, data);
-          this.handleMessage(data, socket);
-        };
-        fileReader.readAsArrayBuffer(blob);
-      }
-    },
-    /**
      * 根据查询结果过滤数据，打标记
      */
     buildMarkersByData: function(t) {
@@ -256,24 +176,12 @@ export default {
           }
         });
       }
-      // this.notify('筛选成功!');
     },
     addStatusWithoutNewline: function(str) {
       this.status += str;
     },
     addStatus: function(str) {
       this.status += str + '<br>';
-    },
-    sendMessage: function(message, socketIndex = 0) {
-      console.log('sendMessage', message);
-
-      // let message = this.initSocketMessage(type, options);
-      if (message.request_type != '1004') {
-        this.addStatusWithoutNewline('WSS发送消息：');
-        this.addStatus(JSON.stringify(message));
-      }
-
-      this.sockets[socketIndex].send(json2buffer(message));
     },
     /**
      * 获取妖灵数据

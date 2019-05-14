@@ -1,4 +1,4 @@
-import tempdata from './components/tempdata';
+import tempdata from './tempdata';
 
 const CUR_YAOLING_VERSION = 'sprite_0e4ebf1344bf35582f7504ee265f32eb.json'; // 妖灵数据库版本，如果与官方版本不一致，需要手动更新
 const APP_VERSION = 'v0.9.512.2316'; // 地图版本
@@ -95,10 +95,11 @@ const FILTER = {
   })
 };
 const SOCKET = {
+  MAX_RECONNECT_TIME: 10, // 断线重连次数
   MSG_INTERVAL: 3000, // 发送消息最小时间间隔
-  RECONNECT_TIME: 1000, // 断线重连时间
+  RECONNECT_TIMEOUT: 1000, // 断线重连时间
   URL:
-    'wss://publicld.gwgo.qq.com?account_value=0&account_type=0&appid=0&token=0' // 官方妖灵查询接口
+    'wss://publicld.gwgo.qq.com?account_value=0&account_type=1&appid=0&token=0' // 官方妖灵查询接口
 };
 
 const BOT = {
@@ -110,7 +111,7 @@ const BOT = {
 // 例如MAX_RANGE=10。即是基准东南西北各+10，再加中心线，21*21的单元格数
 const WIDE_SEARCH = {
   MAX_RANGE: 10, 
-  MAX_SOCKETS: 6, // 最大socket线程数
+  MAX_SOCKETS: 4, // 最大socket线程数
   LAT_RANGE: 0.013754, // 单次查询纬度偏移量
   LNG_RANGE: 0.01795 // 单词查询经度偏移量
 };

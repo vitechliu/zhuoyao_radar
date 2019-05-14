@@ -3,8 +3,7 @@
  * @Last Modified time: 2019-05-11 15:02:18
  * @Desc: mixins
  */
-import { WIDE_SEARCH as WS, SOCKET } from '../config';
-import RadarWebSocket from './socket';
+import { WIDE_SEARCH as WS, SOCKET } from '../lib/config';
 
 module.exports = {
   data() {
@@ -24,20 +23,6 @@ module.exports = {
         showClose: false,
         duration: 2000
       });
-    },
-    /**
-     * 初始化socket
-     */
-    initSockets() {
-      // let max = this.mode === 'normal' ? 1 : WIDE_SEARCH.MAX_SOCKETS;
-      for (let index = 0; index < this.MAX_SOCKETS; index++) {
-        let socket = new RadarWebSocket({
-          index: index,
-          onopen: this.onSocketOpen,
-          onmessage: this.onSocketMessage
-        });
-        this.sockets.push(socket);
-      }
     },
     /**
      * 根据id获取妖灵信息
@@ -126,7 +111,6 @@ module.exports = {
 
           if (this.mode === 'wide') {
             let _position = this.getNextPosition(); // 获取下一个查询点
-            console.log('_position', _position);
             
             if (_position) {
               setTimeout(() => {

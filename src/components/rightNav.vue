@@ -75,7 +75,7 @@
   </div>
 </template>
 <script>
-import { getLocalStorage } from './util';
+import { getLocalStorage } from '../lib/util';
 
 export default {
   name: 'radar-right-nav',
@@ -98,8 +98,6 @@ export default {
     }
   },
   data() {
-    let settings = getLocalStorage('radar_settings');
-
     return {
       filters: [
         {
@@ -140,9 +138,6 @@ export default {
   methods: {
     openMenu() {
       this.$emit('update:showMenu', !this.showMenu);
-    },
-    handleModeClick() {
-      console.log(this.settings.mode);
     }
   }
 };

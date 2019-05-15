@@ -80,12 +80,17 @@ module.exports = {
     botGetYaoling: function() {
       // const convertLocation = n => parseInt(1e6 * n.toFixed(6));
       this.botTime++;
-      this.sendMessage('1001', {
-        longitude: this.botLocation.longitude,
-        latitude: this.botLocation.latitude
-      });
+
+      this.sendMessage(
+        this.initSocketMessage('1001', {
+          longitude: this.botLocation.longitude,
+          latitude: this.botLocation.latitude
+        })
+      );
     },
     botMessage: function(mes) {
+      // console.log(this.botWelcomeInfo);
+      // return;
       $.post(
         'bot/request.php',
         {

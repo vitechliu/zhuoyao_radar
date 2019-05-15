@@ -8,7 +8,6 @@ import { WIDE_SEARCH as WS, SOCKET } from '../lib/config';
 module.exports = {
   data() {
     return {
-      max_range: WS.MAX_RANGE * 2 + 1,
       lng_count: 0,
       lat_count: 0
     };
@@ -37,8 +36,8 @@ module.exports = {
      */
     getNextPosition() {
       if (this.lat_count < this.max_range) {
-        let _lat = (this.lat_count - WS.MAX_RANGE) * WS.LAT_RANGE;
-        let _lng = (this.lng_count - WS.MAX_RANGE) * WS.LNG_RANGE;
+        let _lat = (this.lat_count - this.range) * WS.LAT_RANGE;
+        let _lng = (this.lng_count - this.range) * WS.LNG_RANGE;
 
         // 同一纬度下，如果经度没有超过最大值，则经度递增，否则加1单位纬度
         console.log(`${this.lat_count}-${this.lng_count}`);
@@ -111,7 +110,7 @@ module.exports = {
 
           if (this.mode === 'wide') {
             let _position = this.getNextPosition(); // 获取下一个查询点
-            
+
             if (_position) {
               setTimeout(() => {
                 this.sendMessage(

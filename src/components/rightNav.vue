@@ -33,7 +33,7 @@
         </div>
         <div class="side-content">
           <div class="nav-filter">
-            <div class="header">筛选{{mode}}</div>
+            <div class="header">筛选</div>
             <ul v-if="mode === 'normal'">
               <template v-for="item in filters">
                 <li :key="item.key">

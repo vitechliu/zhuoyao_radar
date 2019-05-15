@@ -2,19 +2,28 @@
   <div id="radar-progress" v-show="show">
     <div class="progress-bg"></div>
     <div class="progress-content">
-      <el-progress :text-inside="true" :stroke-width="12" :percentage="percent"></el-progress>
-      大范围搜索速度较慢，请耐心等待...
+      <el-progress :text-inside="true" :stroke-width="16" :percentage="percent"></el-progress>
+      大范围搜索速度较慢，请耐心等待...<br/>
+      当前线程数{{ thread }},最大搜索范围{{ maxRange }}*{{ maxRange }}个单元。
     </div>
   </div>
 </template>
 <script>
 export default {
-  props:{
+  props: {
     show: {
       type: Boolean,
       default: false
     },
     percent: {
+      type: Number,
+      default: 0
+    },
+    thread: {
+      type: Number,
+      default: 0
+    },
+    maxRange: {
       type: Number,
       default: 0
     }

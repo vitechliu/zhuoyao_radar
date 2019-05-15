@@ -21,8 +21,6 @@ class RadarWebSocket {
 
     this.index = this.opts.index;
 
-    // this.connectError = false;
-
     this.initSocket();
     return this;
   }
@@ -30,33 +28,21 @@ class RadarWebSocket {
    * 初始化
    */
   initSocket() {
-    this.connectError = false;
     this.socket = new WebSocket(this.opts.url);
 
     // 断线重连
-    this.socket.onerror = () => {
-      this.connectError = true;
+    this.socket.onclose = () => {
       if (this.reconnect_time < this.opts.maxReconnectTime) {
         setTimeout(() => {
-          console.log(
-            `ws.${this.index} reconnect from error...${this.reconnect_time}`
-          );
+          console.log(`ws.${this.index} reconnect ...${this.reconnect_time}`);
           this.initSocket();
         }, this.opts.reconnectTimeout);
         this.reconnect_time++;
       }
     };
 
-    this.socket.onclose = () => {
-      if (!this.connectError) {
-        console.log(`ws.${this.index} reconnect from close`);
-        this.initSocket();
-      }
-    };
-
     this.socket.onopen = event => {
-      this.connectError = false;
-      this.reconnect_time = 0;
+      this.reconnect_time = 0; // 连接成功则重置重连次数
       this.opts.onopen(event, this);
     };
     this.socket.onmessage = event => {

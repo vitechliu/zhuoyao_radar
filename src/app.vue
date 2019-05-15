@@ -13,7 +13,7 @@
       <el-button size="mini" type="warning" @click="debug = !debug">Debug</el-button>
     </div>
     <div id="qmap"></div>
-    <radar-progress :show="progressShow" :percent="progressPercent"></radar-progress>
+    <radar-progress :show="progressShow" :max-range="max_range" :thread="thread" :percent="progressPercent"></radar-progress>
   </div>
 </template>
 <script>
@@ -73,14 +73,19 @@ export default {
         latitude: 39.9610780334
       };
     }
+    let range = Number(this.$parent.range || WIDE_SEARCH.MAX_RANGE);
+    let max_range = range * 2 + 1; // 经纬方向单元格最大数
     return {
       location,
       settings,
       showMenu,
       APP_VERSION,
+      range,
+      max_range,
       mode: this.$parent.mode,
       status: '',
       sockets: [],
+      thread: Number(this.$parent.thread || WIDE_SEARCH.MAX_SOCKETS),
       map: {},
       debug: false,
       clickMarker: null, // 点击位置标记
@@ -142,6 +147,10 @@ export default {
     this.$on('botSetup', params => {
       this.botSetup(params);
     });
+
+    if (this.mode === 'wide') {
+      this.notify(`大范围搜索开启，当前最大搜索单位:${Math.pow(this.max_range, 2)}个.线程数:${this.thread}个.`)
+    }
   },
   methods: {
     /**
@@ -261,10 +270,12 @@ export default {
         return Array.from(new Set(_fit));
       }
     },
+    /**
+     * 大范围进度条
+     */
     progressPercent: function() {
-      let maxInLine = WIDE_SEARCH.MAX_RANGE * 2 + 1;
-      let cur = this.lat_count * maxInLine + this.lng_count;
-      return Math.floor(cur / Math.pow(maxInLine, 2) * 100);
+      let cur = this.lat_count * this.max_range + this.lng_count;
+      return Math.floor(cur / Math.pow(this.max_range, 2) * 100);
     }
   },
   watch: {

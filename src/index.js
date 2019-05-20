@@ -32,11 +32,23 @@ Vue.use(Switch);
 Vue.use(Icon);
 Vue.use(Progress);
 
+let getParameter = (name, loca = window.location.href) => {
+  const regexS = `[\\?&]${name}=([^&#]*)`;
+  const regex = new RegExp(regexS);
+  const results = regex.exec(loca);
+
+  if (results === null) return '';
+  return results[1];
+};
+
+let range = getParameter('range');
+let thread = getParameter('thread');
+
 let mode = location.href.indexOf('wide') > -1 ? 'wide' : 'normal';
 
 let vueapp = new Vue({
   el: '#root',
-  data: { mode },
+  data: { mode, range, thread },
   template: '<App/>',
   components: { App }
 });

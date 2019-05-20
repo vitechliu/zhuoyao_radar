@@ -111,7 +111,7 @@ const BOT = {
 // 例如MAX_RANGE=10。即是基准东南西北各+10，再加中心线，21*21的单元格数
 const WIDE_SEARCH = {
   MAX_RANGE: 10, 
-  MAX_SOCKETS: 4, // 最大socket线程数
+  MAX_SOCKETS: 6, // 最大socket线程数
   LAT_RANGE: 0.013754, // 单次查询纬度偏移量
   LNG_RANGE: 0.01795 // 单词查询经度偏移量
 };

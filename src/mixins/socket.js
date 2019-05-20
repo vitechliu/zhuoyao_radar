@@ -14,7 +14,7 @@ module.exports = {
     initSockets() {
       // MAX_SOCKETS: this.$parent.mode === 'normal' ? 1 : WIDE_SEARCH.MAX_SOCKETS,
 
-      let max = this.mode === 'normal' ? 1 : WD.MAX_SOCKETS;
+      let max = this.mode === 'normal' ? 1 : this.thread;
       for (let index = 0; index < max; index++) {
         let socket = new RadarWebSocket({
           url: SOCKET.URL,

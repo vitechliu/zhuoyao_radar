@@ -1,5 +1,7 @@
 # 捉妖雷达 web版
 
+[![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.svg?v=103)](https://opensource.org/licenses/GPL-3.0/)  [![Gitter](https://badges.gitter.im/zhuoyao_radar/community.svg)](https://gitter.im/zhuoyao_radar/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 欢迎PR，声明：本项目永远不会提供虚拟定位、经纬度坐标、自动化脚本相关服务。   
 如果有需求可以搜索其他全站zhuoyao开源项目。 
 
@@ -35,6 +37,10 @@ app.botSetup({
 注意：需要保持酷Q、插件、网页三者都开启！  
 
 ### 更新日志
+
+#### v1.0    
+大范围搜索改动   
+提示优化 
 
 #### v0.9    
 新增位置缓存功能    

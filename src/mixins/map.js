@@ -45,11 +45,12 @@ module.exports = {
      * 地图点击事件
      */
     clickMap(e) {
-      this.notify('位置已重置,请重新筛选');
+      if (!this.settings.auto_search)
+        this.notify('位置已重置,请重新筛选');
       this.location.longitude = e.latLng.lng;
       this.location.latitude = e.latLng.lat;
       var icon = new qq.maps.MarkerImage(
-        'original/image/icon/notify-arrow.png',
+        'src/assets/images/notify-arrow.png',
         null,
         null,
         null,

@@ -1,7 +1,7 @@
 import tempdata from './tempdata';
 
-const CUR_YAOLING_VERSION = 'sprite_0e4ebf1344bf35582f7504ee265f32eb.json'; // 妖灵数据库版本，如果与官方版本不一致，需要手动更新
-const APP_VERSION = 'v0.9.512.2316'; // 地图版本
+const CUR_YAOLING_VERSION = 'sprite_520b92e8846ac5147e1e7d752996a377.json'; // 妖灵数据库版本，如果与官方版本不一致，需要手动更新
+const APP_VERSION = 'v1.1.521.1048'; // 地图版本
 const API_KEY = '2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3'; // 地图 api key
 
 const SUBSCRIBERS = ['落殇'];
@@ -96,7 +96,7 @@ const FILTER = {
 };
 const SOCKET = {
   MAX_RECONNECT_TIME: 10, // 断线重连次数
-  MSG_INTERVAL: 3000, // 发送消息最小时间间隔
+  MSG_INTERVAL: 5000, // 发送消息最小时间间隔
   RECONNECT_TIMEOUT: 1000, // 断线重连时间
   URL:
     'wss://publicld.gwgo.qq.com?account_value=0&account_type=1&appid=0&token=0' // 官方妖灵查询接口

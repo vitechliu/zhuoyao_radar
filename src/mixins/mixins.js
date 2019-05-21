@@ -122,6 +122,10 @@ module.exports = {
               this.progressShow = false;
             }
           } else {
+            if (socket.timeout) {
+              clearTimeout(socket.timeout);
+              socket.timeout = null;
+            }
             this.notify('筛选成功!');
           }
           break;

@@ -39,7 +39,19 @@ module.exports = {
         this.addStatus(JSON.stringify(message));
       }
 
-      this.sockets[socketIndex].send(json2buffer(message));
+      let socket = this.sockets[socketIndex];
+      
+      socket.send(json2buffer(message));
+
+      //监听回应
+      if (socket.timeout) {
+        clearTimeout(socket.timeout);
+      }
+      socket.timeout = setTimeout(() => {
+        this.notify("操作过于频繁，请稍后再查询");
+        // console.log(`ws.${socket.index} reconnect due to no response`);
+        // socket.initSocket();
+      },socket.opts.maxTimeout);
     },
     /**
      * socket开启连接回调

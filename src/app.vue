@@ -11,6 +11,15 @@
       <!-- <el-button size="mini" @click="exportPosition">导出位置</el-button>
       <el-button size="mini" @click="importPosition">导入位置</el-button> -->
       <el-button size="mini" type="warning" @click="debug = !debug">Debug</el-button>
+      <div v-if="mode === 'wide'">
+        <div style="font-size: 14px;">
+          <div>当前线程数: {{sockets.length}}/{{thread}}</div>
+          <template v-for="(socket, index) in sockets" >
+            <p :key="index" v-if="socket">线程.{{index+1}} {{socket.task ? `正在执行任务.${socket.task.taskIndex}` : '空闲'}}</p>
+          </template>  
+          <div v-if="radarTask">任务进度:{{closedTask}}/{{radarTask.tasks.length}}</div>
+        </div>
+      </div>
     </div>
     <div id="qmap"></div>
     <radar-progress :show="progressShow" :max-range="max_range" :thread="thread" :percent="progressPercent"></radar-progress>
@@ -24,6 +33,7 @@ import map from './mixins/map';
 import RightNav from './components/rightNav';
 import socket from './mixins/socket';
 import RadarProgress from './components/radarProgress';
+import RadarTasks from './lib/RadarTasks';
 
 import { getLocalStorage, setLocalStorage } from './lib/util';
 
@@ -75,17 +85,24 @@ export default {
     }
     let range = Number(this.$parent.range || WIDE_SEARCH.MAX_RANGE);
     let max_range = range * 2 + 1; // 经纬方向单元格最大数
+    // 线程数最多6个
+    let thread = Math.min(
+      Number(this.$parent.thread || WIDE_SEARCH.MAX_SOCKETS),
+      6
+    );
     return {
       location,
       settings,
       showMenu,
       APP_VERSION,
       range,
+      thread,
       max_range,
       mode: this.$parent.mode,
       status: '',
-      sockets: [],
-      thread: Number(this.$parent.thread || WIDE_SEARCH.MAX_SOCKETS),
+      sockets: new Array(thread),
+      radarTask: null,
+      searching: false,
       map: {},
       debug: false,
       clickMarker: null, // 点击位置标记
@@ -136,7 +153,7 @@ export default {
         e => {
           console.log(e);
           if (e.code === 3) {
-            this.notify("无法获取设备位置信息");
+            this.notify('无法获取设备位置信息');
           }
         }
       )
@@ -152,7 +169,12 @@ export default {
     });
 
     if (this.mode === 'wide') {
-      this.notify(`大范围搜索开启，当前最大搜索单位:${Math.pow(this.max_range, 2)}个.线程数:${this.thread}个.`)
+      this.notify(
+        `大范围搜索开启，当前最大搜索单位:${Math.pow(
+          this.max_range,
+          2
+        )}个.线程数:${this.thread}个.`
+      );
     }
   },
   methods: {
@@ -207,11 +229,23 @@ export default {
       if (this.mode === 'normal') {
         this.sendMessage(this.initSocketMessage('1001'));
       } else {
+        this.radarTask = new RadarTasks({
+          range: this.range,
+          lng: this.location.longitude,
+          lat: this.location.latitude
+        });
+
+        if (this.searching) {
+          return false;
+        }
         this.progressShow = true;
         this.lng_count = this.lat_count = 0;
+        this.searching = true;
         for (let index = 0; index < WIDE_SEARCH.MAX_SOCKETS; index++) {
-          let _position = this.getNextPosition(); // 获取下一个查询点
-          this.sendMessage(this.initSocketMessage('1001', _position), index);
+          let socket = this.sockets[index];
+          if (socket) {
+            this.startTaskWithSocket(socket);
+          }
         }
       }
     },
@@ -237,16 +271,6 @@ export default {
     getBossLevelConfig: function() {
       return;
       this.sendMessage(this.initSocketMessage('10040'));
-    },
-    /**
-     * 地图中心改变
-     */
-    mapCenterChanged(position) {
-      var c = this.map.getCenter();
-      setLocalStorage('radar_location', {
-        longitude: c.lng,
-        latitude: c.lat
-      });
     }
   },
   computed: {
@@ -277,8 +301,28 @@ export default {
      * 大范围进度条
      */
     progressPercent: function() {
-      let cur = this.lat_count * this.max_range + this.lng_count;
-      return Math.floor(cur / Math.pow(this.max_range, 2) * 100);
+      let result = 0;
+      if (this.radarTask) {
+        let tasks = this.radarTask.tasks;
+        let _close = tasks.filter(i => {
+          return i.status === 'close';
+        }).length;
+        result = Math.floor(_close / tasks.length * 100);
+      }
+      // let _open = tasks.length
+      return result;
+    },
+    /**
+     * 已完成任务数
+     */
+    closedTask: function() {
+      let result = 0;
+      if (this.radarTask) {
+        result = this.radarTask.tasks.filter(i => {
+          return i.status === 'close';
+        }).length;
+      }
+      return result;
     }
   },
   watch: {
@@ -293,5 +337,10 @@ export default {
 };
 </script>
 <style lang='less'>
+#app {
+  // padding-left: 200px;
+  position: relative;
+  height: 100%;
+}
 </style>
 

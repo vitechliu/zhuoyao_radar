@@ -4,6 +4,8 @@
  * @Desc: mixins
  */
 
+import { setLocalStorage } from '../lib/util';
+
 module.exports = {
   methods: {
     exportPosition: function() {
@@ -52,11 +54,14 @@ module.exports = {
      * 地图点击事件
      */
     clickMap(e) {
-      this.notify('位置已重置,请重新筛选');
+      if (this.mode === 'wide' && this.searching) {
+        return false;
+      }
+      if (!this.settings.auto_search) this.notify('位置已重置,请重新筛选');
       this.location.longitude = e.latLng.lng;
       this.location.latitude = e.latLng.lat;
       var icon = new qq.maps.MarkerImage(
-        'original/image/icon/notify-arrow.png',
+        'src/assets/images/notify-arrow.png',
         null,
         null,
         null,
@@ -131,6 +136,16 @@ module.exports = {
         this.markers[i].setMap(null);
       }
       this.markers = [];
+    },
+    /**
+     * 地图中心改变
+     */
+    mapCenterChanged(position) {
+      var c = this.map.getCenter();
+      setLocalStorage('radar_location', {
+        longitude: c.lng,
+        latitude: c.lat
+      });
     }
   }
 };

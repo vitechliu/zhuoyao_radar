@@ -20,7 +20,8 @@
         <div class="side-header">
           <h4>捉妖雷达 - Web</h4>
           <p>{{ version }}</p>
-          <p>捉妖雷达开发者群：1025673494</p>
+          <p><a href="http://note.youdao.com/noteshare?id=cf93745c828b381275f53e5a730eaf96" target="_blank">捉妖雷达开发贡献指引</a></p>
+          <br>
           <p>虚拟定位全家暴毙</p>
           <br/>
           <iframe
@@ -70,11 +71,6 @@
               </el-collapse-item>
             </el-collapse>
           </div>
-          <!-- <div class="hr"></div>
-          <div class="nav-settings">
-            <div class="header">设置</div>
-            
-          </div> -->
         </div>
       </div>
     </transition>

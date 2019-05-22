@@ -63,7 +63,7 @@ module.exports = {
       if (a) {
         return `https://hy.gwgo.qq.com/sync/pet/small/${a.ImgName}.png`;
       } else {
-        return './original/image/default-head.png';
+        return 'src/assets/images/default-head.png';
       }
     },
     /**
@@ -133,6 +133,10 @@ module.exports = {
               }
             }
           } else {
+            if (socket.timeout) {
+              clearTimeout(socket.timeout);
+              socket.timeout = null;
+            }
             this.notify('筛选成功!');
           }
           break;

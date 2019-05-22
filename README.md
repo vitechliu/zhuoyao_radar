@@ -1,6 +1,9 @@
 # 捉妖雷达 web版
 
-欢迎PR，捉妖雷达开发者q群：1025673494    
+[![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.svg?v=103)](https://opensource.org/licenses/GPL-3.0/)  [![Gitter](https://badges.gitter.im/zhuoyao_radar/community.svg)](https://gitter.im/zhuoyao_radar/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
+欢迎PR，声明：本项目永远不会提供虚拟定位、经纬度坐标、自动化脚本相关服务。   
+如果有需求可以搜索其他全站zhuoyao开源项目。 
 
 **因工作室滥用接口 现在雷达获取数据不稳定 请见谅 开源不易**
 
@@ -35,14 +38,18 @@ app.botSetup({
 
 ### 更新日志
 
+#### v1.0    
+大范围搜索改动   
+提示优化 
+
 #### v0.9    
-新增位置缓存功能
-新增剩余时间显示
-去除麻将仔、布鲁等稀有筛选，更新筛选
+新增位置缓存功能    
+新增剩余时间显示   
+去除麻将仔、布鲁等稀有筛选，更新筛选    
 
 #### v0.7    
-第一次进入默认打开菜单   
-更新bot机器人实时监控功能
+第一次进入默认打开菜单    
+更新bot机器人实时监控功能    
 
 #### v0.6    
 更新筛选库    

@@ -11,13 +11,15 @@
       <!-- <el-button size="mini" @click="exportPosition">导出位置</el-button>
       <el-button size="mini" @click="importPosition">导入位置</el-button> -->
       <el-button size="mini" type="warning" @click="debug = !debug">Debug</el-button>
-      <div>当前线程数: {{sockets.length}}/{{thread}}</div>
       <div v-if="mode === 'wide'">
-        <template v-for="(socket, index) in sockets" >
-          <p :key="index" v-if="socket">线程.{{index+1}} {{socket.task ? `正在执行任务.${socket.task.taskIndex}` : '空闲'}}</p>
-        </template>  
+        <div style="font-size: 14px;">
+          <div>当前线程数: {{sockets.length}}/{{thread}}</div>
+          <template v-for="(socket, index) in sockets" >
+            <p :key="index" v-if="socket">线程.{{index+1}} {{socket.task ? `正在执行任务.${socket.task.taskIndex}` : '空闲'}}</p>
+          </template>  
+          <div v-if="radarTask">任务进度:{{closedTask}}/{{radarTask.tasks.length}}</div>
+        </div>
       </div>
-      <div v-if="radarTask">任务进度:{{closedTask}}/{{radarTask.tasks.length}}</div>
     </div>
     <div id="qmap"></div>
     <radar-progress :show="progressShow" :max-range="max_range" :thread="thread" :percent="progressPercent"></radar-progress>
@@ -83,7 +85,11 @@ export default {
     }
     let range = Number(this.$parent.range || WIDE_SEARCH.MAX_RANGE);
     let max_range = range * 2 + 1; // 经纬方向单元格最大数
-    let thread = Number(this.$parent.thread || WIDE_SEARCH.MAX_SOCKETS);
+    // 线程数最多6个
+    let thread = Math.min(
+      Number(this.$parent.thread || WIDE_SEARCH.MAX_SOCKETS),
+      6
+    );
     return {
       location,
       settings,
@@ -146,6 +152,9 @@ export default {
         },
         e => {
           console.log(e);
+          if (e.code === 3) {
+            this.notify('无法获取设备位置信息');
+          }
         }
       )
       .catch(b => {});
@@ -262,16 +271,6 @@ export default {
     getBossLevelConfig: function() {
       return;
       this.sendMessage(this.initSocketMessage('10040'));
-    },
-    /**
-     * 地图中心改变
-     */
-    mapCenterChanged(position) {
-      var c = this.map.getCenter();
-      setLocalStorage('radar_location', {
-        longitude: c.lng,
-        latitude: c.lat
-      });
     }
   },
   computed: {

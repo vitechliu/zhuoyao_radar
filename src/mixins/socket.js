@@ -34,7 +34,6 @@ module.exports = {
     sendMessage: function(message, socket) {
       console.log('sendMessage', message, socket);
 
-      // let message = this.initSocketMessage(type, options);
       if (message.request_type != '1004') {
         this.addStatusWithoutNewline('WSS发送消息：');
         this.addStatus(JSON.stringify(message));

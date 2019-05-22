@@ -13,6 +13,7 @@ class RadarWebSocket {
       reconnectTimeout: 1000, // 断线重连时间
       index: 0, // socket标识
       onopen: () => {},
+      onclose: () => {},
       onmessage: () => {}
     };
 
@@ -31,7 +32,7 @@ class RadarWebSocket {
     this.socket = new WebSocket(this.opts.url);
 
     // 断线重连
-    this.socket.onclose = () => {
+    this.socket.onclose = event => {
       if (this.reconnect_time < this.opts.maxReconnectTime) {
         setTimeout(() => {
           console.log(`ws.${this.index} reconnect ...${this.reconnect_time}`);
@@ -39,6 +40,7 @@ class RadarWebSocket {
         }, this.opts.reconnectTimeout);
         this.reconnect_time++;
       }
+      this.opts.onclose(event, this);
     };
 
     this.socket.onopen = event => {
@@ -47,6 +49,7 @@ class RadarWebSocket {
     };
     this.socket.onmessage = event => {
       this.opts.onmessage(event, this);
+      this.timer && clearTimeout(this.timer);
     };
   }
   /**
@@ -55,11 +58,11 @@ class RadarWebSocket {
    */
   send(msg) {
     this.socket && this.socket.send(msg);
+    this.timer = setTimeout(() => {
+      // 3000ms内没响应就重连
+      this.socket.close();
+    }, 3000);
   }
-  /**
-   * 断线重连
-   */
-  reconnect() {}
 }
 
 export default RadarWebSocket;

@@ -31,6 +31,13 @@ module.exports = {
           this.location.latitude,
           this.location.longitude
         ),
+        zoomControl: false,
+        panControl: false,
+        zoomControl: false,
+        scaleControl: false,
+        mapTypeControl: false,
+        scrollwheel: true,
+        draggable: true,
         zoom: 16 // 地图的中心地理坐标。
       });
 

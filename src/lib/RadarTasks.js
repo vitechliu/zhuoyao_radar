@@ -39,7 +39,7 @@ class RadarTasks {
         this.tasks.push({
           taskIndex: this.tasks.length,
           status: 'open',
-          taskId: `${i_lat}_${i_lng}`,
+          taskId: [i_lat, i_lng],
           longitude: this.opts.lng + _lng,
           latitude: this.opts.lat + _lat
         });
@@ -61,7 +61,7 @@ class RadarTasks {
       console.log(`task.${_task.taskIndex} 被领取`, _task);
     }
 
-    return task;
+    return _task;
   }
   /**
    * 重新打开任务
@@ -98,6 +98,10 @@ class RadarTasks {
 
     return !_task;
   }
+  /**
+   * 获取查询范围的四个角坐标
+   */
+  getRangePosition() {}
 }
 
 export default RadarTasks;

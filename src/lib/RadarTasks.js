@@ -52,15 +52,13 @@ class RadarTasks {
    * 获取下一个open状态的任务
    */
   getNextTask() {
-    let task = null;
-    let _i = this.tasks.findIndex(t => {
+    let _task = this.tasks.find(t => {
       return t.status === 'open';
     });
-    if (_i !== -1) {
+    if (_task) {
       // 将列表中最前面的一个open状态的任务变成wait
-      this.tasks[_i].status = 'wait';
-      task = this.tasks[_i];
-      console.log(`task.${_i} 被领取`, task);
+      _task.status = 'wait';
+      console.log(`task.${_task.taskIndex} 被领取`, _task);
     }
 
     return task;
@@ -69,7 +67,7 @@ class RadarTasks {
    * 重新打开任务
    * @param {*} index
    */
-  reopenTaskByIndex(index) {
+  reopenTask(index) {
     let _task = this.tasks[index];
     if (_task) {
       _task.status = 'open';
@@ -97,7 +95,7 @@ class RadarTasks {
       return t.status !== 'close';
     });
     console.log('isComplete', _task);
-    
+
     return !_task;
   }
 }

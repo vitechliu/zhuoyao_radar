@@ -92,7 +92,7 @@ module.exports = {
       this.sockets[socket.index] = null;
       console.log('socket close', socket);
       if (socket.task && socket.task.status !== 'close') {
-        this.radarTask.reopenTaskByIndex(socket.task.taskIndex);
+        this.radarTask.reopenTask(socket.task.taskIndex);
       } else {
         delete socket.task;
       }

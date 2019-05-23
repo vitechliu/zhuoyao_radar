@@ -22,36 +22,26 @@ module.exports = {
           reconnectTimeout: SOCKET.RECONNECT_TIMEOUT,
           index: index,
           onopen: this.onSocketOpen,
-          onmessage: this.onSocketMessage
+          onmessage: this.onSocketMessage,
+          onclose: this.onSocketClose
         });
-        this.sockets.push(socket);
+        // this.sockets.push(socket);
       }
     },
     /**
      * 发送消息
      */
-    sendMessage: function(message, socketIndex = 0) {
-      console.log('sendMessage', message);
+    sendMessage: function(message, socket) {
+      console.log('sendMessage', message, socket);
 
-      // let message = this.initSocketMessage(type, options);
       if (message.request_type != '1004') {
         this.addStatusWithoutNewline('WSS发送消息：');
         this.addStatus(JSON.stringify(message));
       }
-
-      let socket = this.sockets[socketIndex];
-      
-      socket.send(json2buffer(message));
-
-      //监听回应
-      if (socket.timeout) {
-        clearTimeout(socket.timeout);
+      let _socket = socket || this.sockets[0];
+      if (_socket) {
+        _socket.send(json2buffer(message));
       }
-      socket.timeout = setTimeout(() => {
-        this.notify("操作过于频繁，请稍后再查询");
-        // console.log(`ws.${socket.index} reconnect due to no response`);
-        // socket.initSocket();
-      },socket.opts.maxTimeout);
     },
     /**
      * socket开启连接回调
@@ -59,26 +49,67 @@ module.exports = {
     onSocketOpen: function(event, socket) {
       this.addStatus(`WSS-${socket.index}.连接开启`);
       console.log(`WSS-${socket.index}.连接开启`);
+      this.sockets[socket.index] = socket;
       // 首次连接
       if (this.firstTime) {
         this.firstTime = false;
         this.getSettingFileName();
         this.getBossLevelConfig();
       }
+      if (this.searching) {
+        // 断线重连时，继续任务
+        this.startTaskWithSocket(socket);
+      }
+    },
+    /**
+     * 使用指定socket开始任务
+     * @param {*} socket
+     */
+    startTaskWithSocket(socket) {
+      if (!socket) {
+        return false;
+      }
+      let _task = this.radarTask.getNextTask(); // 获取队列中第一个任务
+      if (_task) {
+        socket.task = _task;
+        this.sendMessage(
+          this.initSocketMessage('1001', {
+            longitude: _task.longitude,
+            latitude: _task.latitude
+          }),
+          socket
+        );
+      } else {
+        delete socket.task;
+      }
+    },
+    /**
+     * socket 链接断开
+     * @param {*} event
+     * @param {*} socket
+     */
+    onSocketClose(event, socket) {
+      this.sockets[socket.index] = null;
+      console.log('socket close', socket);
+      if (socket.task && socket.task.status !== 'close') {
+        this.radarTask.reopenTask(socket.task.taskIndex);
+      } else {
+        delete socket.task;
+      }
     },
     /**
      * 消息响应回调
      */
     onSocketMessage: function(event, socket) {
-      var blob = event.data;
+      let blob = event.data;
 
       if (typeof blob !== 'string') {
-        var fileReader = new FileReader();
+        let fileReader = new FileReader();
         fileReader.onload = e => {
-          var arrayBuffer = e.target.result;
-          var n = utf8ByteToUnicodeStr(new Uint8Array(arrayBuffer).slice(4));
+          let arrayBuffer = e.target.result;
+          let n = utf8ByteToUnicodeStr(new Uint8Array(arrayBuffer).slice(4));
 
-          var data = JSON.parse(n);
+          let data = JSON.parse(n);
 
           console.log(`onSocketMessage${socket.index}`, data);
           this.handleMessage(data, socket);

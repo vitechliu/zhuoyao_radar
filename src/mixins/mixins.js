@@ -109,28 +109,17 @@ module.exports = {
           }
 
           if (this.mode === 'wide') {
-            if (socket.task) {
-              this.radarTask.finishTask(socket.task.taskIndex);
-            }
-            // let _position = this.getNextPosition(); // 获取下一个查询点
-            let _task = this.radarTask.getNextTask(); // 开始下一个任务
-            if (_task) {
-              socket.task = _task;
+            let _position = this.getNextPosition(); // 获取下一个查询点
+
+            if (_position) {
               setTimeout(() => {
                 this.sendMessage(
-                  this.initSocketMessage('1001', {
-                    longitude: _task.longitude,
-                    latitude: _task.latitude
-                  }),
-                  socket
+                  this.initSocketMessage('1001', _position),
+                  socket.index
                 );
-              }, Math.random() * 2000 + SOCKET.MSG_INTERVAL);
+              }, SOCKET.MSG_INTERVAL);
             } else {
-              delete socket.task;
-              if (this.radarTask && this.radarTask.isComplete()) {
-                this.progressShow = false;
-                this.searching = false;
-              }
+              this.progressShow = false;
             }
           } else {
             if (socket.timeout) {

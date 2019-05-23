@@ -96,7 +96,7 @@ const FILTER = {
 };
 const SOCKET = {
   MAX_RECONNECT_TIME: 10, // 断线重连次数
-  MSG_INTERVAL: 5000, // 发送消息最小时间间隔
+  MSG_INTERVAL: 5500, // 发送消息最小时间间隔
   RECONNECT_TIMEOUT: 1000, // 断线重连时间
   URL:
     'wss://publicld.gwgo.qq.com?account_value=0&account_type=1&appid=0&token=0' // 官方妖灵查询接口

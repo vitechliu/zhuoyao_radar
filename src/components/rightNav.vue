@@ -124,6 +124,10 @@ export default {
           key: 'feature'
         },
         {
+          text: '鬼鬼',
+          key: 'ghost'
+        },
+        {
           text: '鲲鲲',
           key: 'fish'
         },

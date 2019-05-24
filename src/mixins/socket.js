@@ -41,6 +41,14 @@ module.exports = {
       let _socket = socket || this.sockets[0];
       if (_socket) {
         _socket.send(json2buffer(message));
+        if (this.mode === "normal") {
+          if (_socket.timeout) {
+            clearTimeout(_socket.timeout);
+          }
+          _socket.timeout = setTimeout(() => {
+            this.notify("操作过于频繁，请稍后再查询");
+          },_socket.opts.maxTimeout);
+        }
       }
     },
     /**

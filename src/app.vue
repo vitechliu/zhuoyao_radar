@@ -116,7 +116,7 @@ export default {
       botMode: false,
       botInterval: null,
       botTime: 0,
-      botGroup: '799576270',
+      botGroup: '群号',
       botChecked: [],
       botWelcomeInfo: '捉妖扫描机器人2.1启动~有什么问题可以@我哦',
       botLocation: {

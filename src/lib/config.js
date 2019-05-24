@@ -1,7 +1,7 @@
 import tempdata from './tempdata';
 
 const CUR_YAOLING_VERSION = 'sprite_520b92e8846ac5147e1e7d752996a377.json'; // 妖灵数据库版本，如果与官方版本不一致，需要手动更新
-const APP_VERSION = 'v1.1.521.1048'; // 地图版本
+const APP_VERSION = 'v1.2.524.1301'; // 地图版本
 const API_KEY = '2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3'; // 地图 api key
 
 const SUBSCRIBERS = ['落殇'];
@@ -82,6 +82,10 @@ const FILTER = {
     2000327, // 小蝙蝠
     2000265, // 香玉
     2000238 // 颜如玉
+  ],
+  FILTER_GHOST: [
+    2000271, //三魂
+    2000272, //七魄
   ],
   FILTER_T1: tempdata.Data.filter(item => {
     return item.Level === 2;

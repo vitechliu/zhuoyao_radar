@@ -35,12 +35,12 @@
         <div class="side-content">
           <div class="nav-filter">
             <el-collapse v-model="activeName" accordion>
-              <el-collapse-item title="筛选" name="1">
+              <el-collapse-item :title="'筛选'+(settings.use_custom?'(已启用自定义)':'')" name="1">
                 <ul v-if="mode === 'normal'">
                   <template v-for="item in filters">
                     <li :key="item.key">
                       <span class="tag">{{item.text}}</span>
-                      <el-switch v-model="settings.fit[item.key]"> </el-switch>
+                      <el-switch v-model="settings.fit[item.key]" :disabled="settings.use_custom"> </el-switch>
                     </li>
                   </template>
                 </ul>
@@ -48,13 +48,17 @@
                   <template v-for="item in settings.wide">
                     <li :key="item.id">
                       <span class="tag">{{item.name}}</span>
-                      <el-switch v-model="item.on"> </el-switch>
+                      <el-switch v-model="item.on" :disabled="settings.use_custom"> </el-switch>
                     </li>
                   </template>
                 </ul>
               </el-collapse-item>
               <el-collapse-item title="设置" name="2">
                 <ul>
+                  <li>
+                    <span class="tag">启用自定义筛选</span>
+                    <el-switch v-model="settings.use_custom"> </el-switch>
+                  </li>
                   <li>
                     <span class="tag">点击地图自动搜索</span>
                     <el-switch v-model="settings.auto_search"> </el-switch>
@@ -138,7 +142,7 @@ export default {
         {
           text: '其他所有（慎选）',
           key: 'all'
-        }
+        },
       ]
     };
   },

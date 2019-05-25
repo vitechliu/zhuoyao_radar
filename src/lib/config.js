@@ -1,12 +1,16 @@
 import tempdata from './tempdata';
+import availableYaolings from './availableYaolings';
 
 const CUR_YAOLING_VERSION = 'sprite_736ccf43e1837de040108c29c00019d0.json'; // 妖灵数据库版本，如果与官方版本不一致，需要手动更新
 //本地妖灵数据库更新时间:"2019-05-25 13:09:00"
 
-const APP_VERSION = 'v1.2.524.1301'; // 地图版本
+const APP_VERSION = 'v1.3.525.1756'; // 地图版本
 const API_KEY = '2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3'; // 地图 api key
 
-const SUBSCRIBERS = ['落殇'];
+let dataMap = [];
+tempdata.Data.forEach(o => {
+  dataMap[o.Id] = o;
+});
 
 const FILTER = {
   FILTER_WIDE: [
@@ -90,16 +94,26 @@ const FILTER = {
     2000272, //七魄
   ],
   FILTER_T1: tempdata.Data.filter(item => {
-    return item.Level === 2;
+    return item.Level === 2 && availableYaolings.Data.includes(item.Id);
   }).map(item => {
     return item.Id;
   }),
   FILTER_T2: tempdata.Data.filter(item => {
-    return item.Level === 3;
+    return item.Level === 3 && availableYaolings.Data.includes(item.Id);
   }).map(item => {
     return item.Id;
+  }),
+
+  FILTER_CUSTOM: availableYaolings.Data.map(item => {
+    return {
+      id: item,
+      name: dataMap[item].Name,
+      img: dataMap[item].SmallImgPath,
+      on:false,
+    }
   })
 };
+
 const SOCKET = {
   MAX_RECONNECT_TIME: 10, // 断线重连次数
   MSG_INTERVAL: 5000, // 发送消息最小时间间隔

@@ -8,8 +8,7 @@
     </div>
     <div id="buttons">
       <el-button size="mini" @click="getYaolingInfo">妖灵</el-button>
-      <!-- <el-button size="mini" @click="exportPosition">导出位置</el-button>
-      <el-button size="mini" @click="importPosition">导入位置</el-button> -->
+      <el-button size="mini" @click="filterDialogVisible = true">自定义筛选</el-button>
       <el-button size="mini" type="warning" @click="debug = !debug">Debug</el-button>
       <div v-if="mode === 'wide'">
         <div style="font-size: 14px;">
@@ -23,6 +22,22 @@
     </div>
     <div id="qmap"></div>
     <radar-progress :show="progressShow" :max-range="max_range" :thread="thread" :percent="progressPercent"></radar-progress>
+    <el-dialog
+    title="自定义筛选"
+    :visible.sync="filterDialogVisible"
+    class="filter-dialog">
+    <div class="check">
+      <el-checkbox v-model="settings.use_custom">启用</el-checkbox>
+    </div>
+    <el-row :gutter="10" class="filter-list">
+      <el-col v-for="(yl, index) in settings.custom_filter" :key="index" :xs="12" :sm="8" :md="6" :lg="4" :xl="3">
+        <div class="filter-content" :class="{active : yl.on}" @click="yl.on = !yl.on">
+          <img :src="'https://hy.gwgo.qq.com/sync/pet/'+yl.img" :alt="yl.name">
+          <span>{{ yl.name }}</span>
+        </div>
+      </el-col>
+    </el-row>
+  </el-dialog>
   </div>
 </template>
 <script>
@@ -65,16 +80,24 @@ export default {
         rare: true,
         fish: false,
         feature: false,
-        element: false
+        element: false,
       },
       auto_search: false,
       show_time: true,
       position_sync: true,
-      wide: FILTER.FILTER_WIDE
+      wide: FILTER.FILTER_WIDE,
+      custom_filter:FILTER.FILTER_CUSTOM,
+      use_custom:false,
     };
     if (!settings) {
       showMenu = true;
     }
+    //TODO: 对于settings.custom_filter
+    //在版本更新后availableYaolings发生变动时，custom_filter会保留以前的键
+    //因此需要在此处做一个remapping
+    //
+    //
+
     settings = Object.assign({}, defaultSettings, settings || {});
 
     if (!(location && settings.position_sync)) {
@@ -123,7 +146,8 @@ export default {
         longitude: 116.3579177856,
         latitude: 39.9610780334
       },
-      progressShow: false
+      progressShow: false,
+      filterDialogVisible:false
     };
   },
   mounted() {
@@ -162,7 +186,8 @@ export default {
     this.addStatus(`捉妖雷达Web版 <br/>
       版本:${APP_VERSION} <br/>
       更新日志:<br/>
-      虚拟定位 全家暴毙`);
+      添加自定义筛选功能<br/>
+      更新妖灵库`);
 
     this.$on('botSetup', params => {
       this.botSetup(params);
@@ -276,11 +301,23 @@ export default {
   computed: {
     fit: function() {
       let ans = [];
+
+      //自定义筛选优先级最高
+      if (this.settings.use_custom) {
+        return Array.from(new Set(
+          this.settings.custom_filter
+          .filter(item => item.on)
+          .map(item => item.id)
+        ));
+      }
+
       if (this.mode === 'normal') {
+        
         let _fit = this.settings.fit;
         if (_fit.all) {
           return ['special'];
         }
+        
 
         // 根据值把key转换成FILTER_FISH这种，取常量配置中的值
         for (let _f in _fit) {

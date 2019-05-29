@@ -4,7 +4,7 @@ import availableYaolings from './availableYaolings';
 const CUR_YAOLING_VERSION = 'sprite_736ccf43e1837de040108c29c00019d0.json'; // 妖灵数据库版本，如果与官方版本不一致，需要手动更新
 //本地妖灵数据库更新时间:"2019-05-25 13:09:00"
 
-const APP_VERSION = 'v1.3.525.1756'; // 地图版本
+const APP_VERSION = 'v1.4.529.1032'; // 地图版本
 const API_KEY = '2LWBZ-FEQK6-KKYS2-M6WR4-PFGS5-RZBP3'; // 地图 api key
 
 let dataMap = [];

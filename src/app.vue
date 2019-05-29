@@ -33,7 +33,7 @@
       <el-col v-for="(yl, index) in settings.custom_filter" :key="index" :xs="12" :sm="8" :md="6" :lg="4" :xl="3">
         <div class="filter-content" :class="{active : yl.on}" @click="yl.on = !yl.on">
           <img :src="'https://hy.gwgo.qq.com/sync/pet/'+yl.img" :alt="yl.name">
-          <span>{{ yl.name }}</span>
+          <span :class="{active:up(yl.id)}">{{ yl.name }}</span>
         </div>
       </el-col>
     </el-row>
@@ -42,6 +42,7 @@
 </template>
 <script>
 import tempdata from './lib/tempdata';
+import activities from './lib/activities';
 import mixins from './mixins/mixins';
 import bot from './mixins/bot';
 import map from './mixins/map';
@@ -100,6 +101,20 @@ export default {
 
     settings = Object.assign({}, defaultSettings, settings || {});
 
+    if (settings.custom_filter) {
+      let sc = settings.custom_filter;
+      let scMap = [];
+      let ans = [];
+      sc.forEach(o => {
+        scMap[o.Id] = o;
+      });
+      defaultSettings.custom_filter.forEach((v,i,a) => {
+        if (scMap.hasOwnProperty(v.id)) ans.push(scMap[v.id]);
+        else ans.push(v);
+      });
+      settings.custom_filter = ans;
+    }
+    
     if (!(location && settings.position_sync)) {
       location = {
         longitude: 116.3579177856,
@@ -134,6 +149,7 @@ export default {
       currVersion: CUR_YAOLING_VERSION, //190508版本的json 如果有变动手动更新
       statusOK: false,
       yaolings: tempdata.Data,
+      upYaolings: activities.Data,
       markers: [],
       messageMap: new Map(), // 缓存请求类型和id
       botMode: false,
@@ -186,8 +202,8 @@ export default {
     this.addStatus(`捉妖雷达Web版 <br/>
       版本:${APP_VERSION} <br/>
       更新日志:<br/>
-      添加自定义筛选功能<br/>
-      更新妖灵库`);
+      加入活动up标识<br/>
+      加入人生赢家套系妖灵`);
 
     this.$on('botSetup', params => {
       this.botSetup(params);
@@ -296,6 +312,12 @@ export default {
     getBossLevelConfig: function() {
       return;
       this.sendMessage(this.initSocketMessage('10040'));
+    },
+    /**
+     * 是否为活动up妖灵
+     */
+    up:function(val) {
+      return this.upYaolings.hasOwnProperty(val) && this.upYaolings[val] ;
     }
   },
   computed: {
@@ -360,7 +382,7 @@ export default {
         }).length;
       }
       return result;
-    }
+    },
   },
   watch: {
     settings: {

@@ -270,12 +270,20 @@ div.el-switch {
     img {
       height:30px;
       width:30px;
+      border-radius:15px;
     }
     span {
       transition:color .5s;
       position:relative;
       bottom:7px;
       color:#333;
+    }
+    
+    span.active::after {
+      content:"up";
+      font-size:12px;
+      vertical-align: super;
+      color:rgb(255,50,50);
     }
     &.active {
       background-color:rgba(100,100,255,.9);

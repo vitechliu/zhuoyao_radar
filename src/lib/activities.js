@@ -8,14 +8,14 @@ module.exports = {
             [29,30].includes((new Date()).getDate())
         ),
         2000507:(
-            ((new Date()).getMonth() == 4 && (new Date()).getDate()== 31)
-            ||
-            ((new Date()).getMonth() == 5 && (new Date()).getDate()== 1)
-        ),
-        2000508:(
             (new Date()).getMonth() == 5 
             && 
             [2,3].includes((new Date()).getDate())
+        ),
+        2000508:(
+            ((new Date()).getMonth() == 4 && (new Date()).getDate()== 31)
+            ||
+            ((new Date()).getMonth() == 5 && (new Date()).getDate()== 1)
         ), 
         2000509:(
             (new Date()).getMonth() == 5 

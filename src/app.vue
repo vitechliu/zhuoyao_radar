@@ -83,37 +83,48 @@ export default {
         feature: false,
         element: false,
       },
-      auto_search: false,
+      auto_search: true,
       show_time: true,
-      position_sync: true,
+      position_sync: false,
       wide: FILTER.FILTER_WIDE,
       custom_filter:FILTER.FILTER_CUSTOM,
       use_custom:false,
+      version:APP_VERSION,
     };
+
+
+    let flag = false;
+    let ans = [];
+
+    //如果第一次打开网页 则打开菜单
     if (!settings) {
       showMenu = true;
+    } else {
+      //对于settings.custom_filter
+      //在版本更新后availableYaolings发生变动时，custom_filter会保留以前的键
+      //因此需要在此处做一个remapping
+      
+      if (settings.custom_filter) {
+        let sc = settings.custom_filter;
+        let scMap = [];
+        sc.forEach(o => {
+          scMap[o.Id] = o;
+        });
+        defaultSettings.custom_filter.forEach((v,i,a) => {
+          if (scMap.hasOwnProperty(v.id)) ans.push(scMap[v.id]);
+          else ans.push(v);
+        });
+      }
     }
-    //TODO: 对于settings.custom_filter
-    //在版本更新后availableYaolings发生变动时，custom_filter会保留以前的键
-    //因此需要在此处做一个remapping
-    //
-    //
-
+    
     settings = Object.assign({}, defaultSettings, settings || {});
 
-    if (settings.custom_filter) {
-      let sc = settings.custom_filter;
-      let scMap = [];
-      let ans = [];
-      sc.forEach(o => {
-        scMap[o.Id] = o;
-      });
-      defaultSettings.custom_filter.forEach((v,i,a) => {
-        if (scMap.hasOwnProperty(v.id)) ans.push(scMap[v.id]);
-        else ans.push(v);
-      });
+    if (flag) {
       settings.custom_filter = ans;
     }
+
+    
+    
     
     if (!(location && settings.position_sync)) {
       location = {

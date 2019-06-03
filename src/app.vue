@@ -89,6 +89,7 @@ export default {
       wide: FILTER.FILTER_WIDE,
       custom_filter:FILTER.FILTER_CUSTOM,
       use_custom:false,
+      show_box:false,
       version:APP_VERSION,
     };
 
@@ -156,6 +157,9 @@ export default {
       debug: false,
       clickMarker: null, // 点击位置标记
       userMarker: null, // 用户位置标记
+      searchBoxMarker: [], //大范围搜索框标记
+      searchBoxWideSet: new Set(), //大范围搜索集合
+      searchOutboxMarker: null, //外围指引框标记
       firstTime: true, // 首次连接socket标记
       currVersion: CUR_YAOLING_VERSION, //190508版本的json 如果有变动手动更新
       statusOK: false,
@@ -279,17 +283,29 @@ export default {
       this.clearAllMarkers();
 
       if (this.mode === 'normal') {
+        if (this.searchOutboxMarker != null) this.searchOutboxMarker.setMap(null);
+        if (this.searchBoxMarker.length > 0) {
+          this.searchBoxMarker[0].setMap(null);
+          this.searchBoxMarker.pop();
+        }
+
+        this.buildSearchboxMarker(this.location.latitude,this.location.longitude,true);
         this.sendMessage(this.initSocketMessage('1001'));
       } else {
+        if (this.searching) {
+          this.notify("请等待此次搜索结束！");
+          return false;
+        }
+
+        this.clearAllBox();
+
         this.radarTask = new RadarTasks({
           range: this.range,
           lng: this.location.longitude,
           lat: this.location.latitude
         });
 
-        if (this.searching) {
-          return false;
-        }
+        
         this.progressShow = true;
         this.lng_count = this.lat_count = 0;
         this.searching = true;

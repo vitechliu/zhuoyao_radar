@@ -57,6 +57,7 @@ class RadarTasks {
     });
     if (_task) {
       // 将列表中最前面的一个open状态的任务变成wait
+      app.buildSearchboxMarker(_task.latitude,_task.longitude,false);
       _task.status = 'wait';
       console.log(`task.${_task.taskIndex} 被领取`, _task);
     }

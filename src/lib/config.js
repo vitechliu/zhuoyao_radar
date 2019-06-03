@@ -136,6 +136,18 @@ const WIDE_SEARCH = {
   LNG_RANGE: 0.01795 // 单词查询经度偏移量
 };
 
+const MAP_PARAMS = {
+  BOX_WIDTH: 2,
+  BOX_FILL: new qq.maps.Color(100,100,255,0.1),
+  BOX_STROKE: new qq.maps.Color(100,100,255,0.4),
+
+  OUTBOX_WIDTH: 1,
+  OUTBOX_FILL: new qq.maps.Color(0,0,0,0),
+  OUTBOX_STROKE: new qq.maps.Color(100,200,255,0.8),
+
+  ERROR_FILL: new qq.maps.Color(255,100,100,0.4),
+  ERROR_STROKE: new qq.maps.Color(255,100,100,0.6),
+}
 
 module.exports = {
   FILTER,
@@ -144,5 +156,6 @@ module.exports = {
   CUR_YAOLING_VERSION,
   APP_VERSION,
   WIDE_SEARCH,
+  MAP_PARAMS,
   BOT
 };

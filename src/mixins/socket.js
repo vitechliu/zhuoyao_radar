@@ -47,6 +47,7 @@ module.exports = {
           }
           _socket.timeout = setTimeout(() => {
             this.notify("操作过于频繁，请稍后再查询");
+            this.boxError();
           },_socket.opts.maxTimeout);
         }
       }

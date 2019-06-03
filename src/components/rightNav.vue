@@ -71,6 +71,10 @@
                     <span class="tag">记住上次退出位置</span>
                     <el-switch v-model="settings.position_sync"> </el-switch>
                   </li>
+                  <li>
+                    <span class="tag">显示搜索范围</span>
+                    <el-switch v-model="settings.show_box"> </el-switch>
+                  </li>
                 </ul>
               </el-collapse-item>
             </el-collapse>

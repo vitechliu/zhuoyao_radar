@@ -13,29 +13,6 @@
 目前前端还在开发当中。可能随时会被封，感谢@ZachXia提供的思路。   
 
 
-### QQ机器人配置
-
-#### 步骤
-
-警告，以下步骤特别复杂，不建议小白独自尝试！   
-
-1.安装 [酷Q Air](https://cqp.cc/t/23253) 机器人，用小号配置成功；   
-2.安装 [Newbe.Mahua](http://www.newbe.pro/2019/01/25/Newbe.Mahua/Start-With-Mahua-In-V2.0/) 框架，并根据教程打开插件；   
-3.在本地运行php开发环境（如[xampp](https://www.apachefriends.org/index.html),phpstudy)等，并将项目目录设为根目录；  
-4.浏览器运行127.0.0.1(或localhost)，F12 控制台执行以下配置即可开启；
-```
-app.botSetup({
-    qqGroup:群号,
-    welcome:"机器人开启欢迎信息", //留空则不发送
-    location:{
-        longitude:经度,
-        latitude:纬度,
-    },
-});
-```
-
-注意：需要保持酷Q、插件、网页三者都开启！  
-
 ### 更新日志
 
 #### v1.5.0   

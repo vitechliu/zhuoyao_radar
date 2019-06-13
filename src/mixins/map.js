@@ -12,22 +12,7 @@ import {
 
 module.exports = {
   methods: {
-    // exportPosition: function() {
-    //   var pos = this.$prompt('请输入标签', '缓存位置', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     inputValidator: value => {
-    //       if (value.length == 0) return '请输入标签';
-    //       return true;
-    //     }
-    //   }).then(({ value }) => {
-    //     this.$message({
-    //       type: 'success',
-    //       message: '你的邮箱是: ' + value
-    //     });
-    //   });
-    // },
-    // importPosition: function() {},
+
     /**
      * 初始化地图
      */
@@ -44,14 +29,14 @@ module.exports = {
         mapTypeControl: false,
         scrollwheel: true,
         draggable: true,
-        zoom: 16 // 地图的中心地理坐标。
+        zoom: this.location.zoom ? this.location.zoom : 16, 
       });
 
       qq.maps.event.addListener(this.map, 'click', this.clickMap);
       qq.maps.event.addListener(
         this.map,
-        'center_changed',
-        this.mapCenterChanged
+        'bounds_changed',
+        this.mapChanged
       );
     },
     /**
@@ -214,11 +199,13 @@ module.exports = {
     /**
      * 地图中心改变
      */
-    mapCenterChanged(position) {
+    mapChanged(position) {
       var c = this.map.getCenter();
+      var z = this.map.getZoom();
       setLocalStorage('radar_location', {
         longitude: c.lng,
-        latitude: c.lat
+        latitude: c.lat,
+        zoom: z
       });
     }
   }

@@ -109,12 +109,14 @@ export default {
         let sc = settings.custom_filter;
         let scMap = [];
         sc.forEach(o => {
-          scMap[o.Id] = o;
+          scMap[o.id] = o;
         });
         defaultSettings.custom_filter.forEach((v,i,a) => {
+          console.log(11);
           if (scMap.hasOwnProperty(v.id)) ans.push(scMap[v.id]);
           else ans.push(v);
         });
+        flag = true;
       }
     }
     

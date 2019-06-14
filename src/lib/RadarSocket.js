@@ -20,7 +20,7 @@ class RadarWebSocket {
 
     this.opts = Object.assign({}, defaults, opts);
     this.reconnect_time = 0;
-
+    this.manual_close = false; //是否为主动关闭
     this.index = this.opts.index;
 
     this.initSocket();
@@ -39,10 +39,16 @@ class RadarWebSocket {
     // 断线重连
     this.socket.onclose = event => {
       if (this.reconnect_time < this.opts.maxReconnectTime) {
+        let reconnectTimeout = this.opts.reconnectTimeout;
+        //如果是主动关闭，则无需等待1秒重连
+        if (this.manual_close) {
+          reconnectTimeout = 1;
+          this.manual_close = false;
+        }
         setTimeout(() => {
           console.log(`ws.${this.index} reconnect ...${this.reconnect_time}`);
           this.initSocket();
-        }, this.opts.reconnectTimeout);
+        }, reconnectTimeout);
         this.reconnect_time++;
       }
       this.opts.onclose(event, this);
@@ -64,7 +70,8 @@ class RadarWebSocket {
   send(msg) {
     this.socket && this.socket.send(msg);
     this.timer = setTimeout(() => {
-      // 3000ms内没响应就重连
+      // 3000ms内没响应就主动关闭并重连 
+      this.manual_close = true;
       this.socket.close();
     }, 3000);
   }

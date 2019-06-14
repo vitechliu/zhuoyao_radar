@@ -99,10 +99,6 @@ class RadarTasks {
 
     return !_task;
   }
-  /**
-   * 获取查询范围的四个角坐标
-   */
-  getRangePosition() {}
 }
 
 export default RadarTasks;

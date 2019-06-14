@@ -84,6 +84,7 @@ module.exports = {
      * 处理消息
      */
     handleMessage(data, socket) {
+      
       var msgType = this.messageMap.get(`msg_${data.requestid}`);
       if (msgType) {
         this.messageMap.delete(`msg_${data.requestid}`);
@@ -101,14 +102,15 @@ module.exports = {
             '获取到妖灵数量',
             data.sprite_list ? data.sprite_list.length : 0
           );
+
           if (this.botMode) {
-            // 机器人
+            // 机器人模式
             this.botAnalyze(data.sprite_list);
-          } else {
-            this.buildMarkersByData(data.sprite_list);
-          }
+            return;
+          } 
 
           if (this.mode === 'wide') {
+            this.buildMarkersByData(data.sprite_list);
             if (socket.task) {
               this.radarTask.finishTask(socket.task.taskIndex);
             }
@@ -133,6 +135,7 @@ module.exports = {
               }
             }
           } else {
+            this.buildMarkersByData(data.sprite_list);
             if (socket.timeout) {
               clearTimeout(socket.timeout);
               socket.timeout = null;
@@ -182,6 +185,27 @@ module.exports = {
           reject(null);
         }
       });
-    }
+    },
+
+    /**
+     * 接收到妖灵信息后，重置消息列表
+     */
+    broadcastGroupMessage(groupId) {
+      this.messageMap.forEach((v,i,a) => {
+        if (v.opts.groupId == groupId) {
+          v.discard();
+        }
+      });
+    },
+    /**
+     * 刷新消息列表
+     */
+    refreshGroupMessage() {
+      this.messageMap.forEach((v,i,a) => {
+        if (v.status == "finish" || v.status == "discarded") {
+          v.delete();
+        }
+      });
+    },
   }
 };

@@ -219,7 +219,7 @@ export default {
     this.addStatus(`捉妖雷达Web版 <br/>
       版本:${APP_VERSION} <br/>
       更新日志:<br/>
-      加入搜索范围显示选项<br/>`);
+      加入新版本活动妖灵<br/>`);
 
     this.$on('botSetup', params => {
       this.botSetup(params);

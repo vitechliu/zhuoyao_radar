@@ -7,6 +7,8 @@
 import Vue from 'vue';
 window.Vue = Vue;
 
+window.md5 = require('md5');
+
 window.$ = window.jQuery = require('jquery');
 import App from './App';
 import {

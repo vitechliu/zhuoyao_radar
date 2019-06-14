@@ -5,6 +5,7 @@
  */
 
 import { setLocalStorage } from '../lib/util';
+import RadarMapMarker from '../lib/RadarMapMarker';
 import {
   MAP_PARAMS,
   WIDE_SEARCH
@@ -76,12 +77,17 @@ module.exports = {
      * 根据妖灵信息在地图上打个标记
      */
     addMarkers(yl) {
+
+      var key = window.md5(yl.gentime.toString()+yl.latitude.toString()+yl.longtitude.toString());
+
+      if (this.markers.has(key)) return; //重复妖灵不添加
+
       let headImage = this.getHeadImagePath(yl);
 
       var time = new Date((yl.gentime + yl.lifetime) * 1000) - new Date();
       var second = time / 1000;
       var minute = Math.floor(second / 60);
-      var second = Math.floor(second % 60);
+      second = Math.floor(second % 60);
 
       var fintime = minute + '分' + second + '秒';
 
@@ -102,7 +108,13 @@ module.exports = {
       });
 
       marker.setIcon(icon);
-      this.markers.push(marker);
+      
+      let markeropts = {
+        marker:marker,
+        laberMarker:null,
+        time:new Date((yl.gentime + yl.lifetime) * 1000),
+      };
+      
 
       // 展示倒计时
       if (this.settings.show_time) {
@@ -117,8 +129,10 @@ module.exports = {
           },
           zIndex:22000,
         });
-        this.markers.push(labelMarker);
+        markeropts.labelMarker = labelMarker;
       }
+
+      this.markers[key] = new RadarMapMarker(markeropts);
     },
     buildSearchboxMarker(lat,lng,showOuter) {
       if (!this.settings.show_box) return;
@@ -170,10 +184,10 @@ module.exports = {
      * 清除标记
      */
     clearAllMarkers() {
-      for (var i = 0; i < this.markers.length; i++) {
-        this.markers[i].setMap(null);
+      for (var key in this.markers) {
+        this.markers[key].clear();
       }
-      this.markers = [];
+      this.markers.clear();
     },
     /**
      * 清除搜索框

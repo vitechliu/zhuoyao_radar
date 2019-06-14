@@ -1,3 +1,6 @@
+/**
+ * 地图标记
+ */
 class RadarMapMarker {
     constructor(opts) {
         

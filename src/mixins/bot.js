@@ -7,6 +7,7 @@
 module.exports = {
   methods: {
     botSetup: function(settings) {
+      return;
       if (settings.hasOwnProperty('qqGroup')) this.botGroup = settings.qqGroup;
       if (settings.hasOwnProperty('welcome'))
         this.botWelcomeInfo = settings.welcome;

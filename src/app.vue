@@ -220,10 +220,6 @@ export default {
       更新日志:<br/>
       加入新版本活动妖灵<br/>`);
 
-    this.$on('botSetup', params => {
-      this.botSetup(params);
-    });
-
     if (this.mode === 'wide') {
       this.notify(
         `大范围搜索开启，当前最大搜索单位:${Math.pow(

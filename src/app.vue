@@ -162,10 +162,9 @@ export default {
       searchOutboxMarker: null, //外围指引框标记
       firstTime: true, // 首次连接socket标记
       currVersion: CUR_YAOLING_VERSION, //190508版本的json 如果有变动手动更新
-      statusOK: false,
       yaolings: tempdata.Data,
       upYaolings: activities.Data,
-      markers: [],
+      markers: new Map(), //妖灵markerclass
       messageMap: new Map(), // 缓存请求类型和id
       botMode: false,
       botInterval: null,
@@ -251,7 +250,6 @@ export default {
       //     console.log("3");
       // }
       // console.log("2");
-      this.statusOK = true;
     },
     /**
      * 根据查询结果过滤数据，打标记
@@ -278,7 +276,7 @@ export default {
      * 获取妖灵数据
      */
     getYaolingInfo: function() {
-      if (!this.statusOK || this.botMode) return;
+      if (this.botMode) return;
 
       // 先清除标记
       this.clearAllMarkers();
@@ -325,7 +323,7 @@ export default {
       this.addStatus('功能开发中!');
       this.notify('功能开发中!');
       return;
-      if (!this.statusOK || this.botMode) return;
+      if (this.botMode) return;
       this.sendMessage(this.initSocketMessage('1001'));
     },
     /**

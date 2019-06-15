@@ -3,13 +3,9 @@
     <right-nav :version="APP_VERSION" :settings="settings" :show-menu.sync="showMenu" :mode="mode"></right-nav>
     <!-- <normal-nav :version="APP_VERSION" :settings="settings" :show-menu="showMenu"></normal-nav> -->
 
-    <div id="status" v-show="debug">
-      <div id="info"><br/><span v-html="status"></span></div>
-    </div>
     <div id="buttons">
       <el-button size="mini" @click="getYaolingInfo">妖灵</el-button>
       <el-button size="mini" @click="filterDialogVisible = true">自定义筛选</el-button>
-      <el-button size="mini" type="warning" @click="debug = !debug">Debug</el-button>
       <div v-if="mode === 'wide'">
         <div style="font-size: 14px;">
           <div>当前线程数: {{sockets.length}}/{{thread}}</div>
@@ -149,18 +145,15 @@ export default {
       thread,
       max_range,
       mode: this.$parent.mode,
-      status: '',
       sockets: new Array(thread),
       radarTask: null,
       searching: false,
       map: {},
-      debug: false,
       clickMarker: null, // 点击位置标记
       userMarker: null, // 用户位置标记
       searchBoxMarker: [], //大范围搜索框标记
       searchBoxWideSet: new Set(), //大范围搜索集合
       searchOutboxMarker: null, //外围指引框标记
-      firstTime: true, // 首次连接socket标记
       currVersion: CUR_YAOLING_VERSION, //190508版本的json 如果有变动手动更新
       yaolings: tempdata.Data,
       upYaolings: activities.Data,
@@ -215,11 +208,6 @@ export default {
         .catch(b => {});
     }
 
-    this.addStatus(`捉妖雷达Web版 <br/>
-      版本:${APP_VERSION} <br/>
-      更新日志:<br/>
-      加入新版本活动妖灵<br/>`);
-
     if (this.mode === 'wide') {
       this.notify(
         `大范围搜索开启，当前最大搜索单位:${Math.pow(
@@ -261,12 +249,6 @@ export default {
           }
         });
       }
-    },
-    addStatusWithoutNewline: function(str) {
-      this.status += str;
-    },
-    addStatus: function(str) {
-      this.status += str + '<br>';
     },
     /**
      * 获取妖灵数据
@@ -316,7 +298,6 @@ export default {
      * 获取擂台数据
      */
     getLeitaiInfo: function() {
-      this.addStatus('功能开发中!');
       this.notify('功能开发中!');
       return;
       if (this.botMode) return;

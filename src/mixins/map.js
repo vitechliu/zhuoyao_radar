@@ -174,11 +174,6 @@ module.exports = {
         fillColor:MAP_PARAMS.BOX_FILL,
         zIndex:6000,
       }));
-
-      
-
-      
-
     },
     /**
      * 清除标记

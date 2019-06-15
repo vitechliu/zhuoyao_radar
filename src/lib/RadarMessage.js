@@ -16,7 +16,10 @@ class RadarMessage {
 
         this.opts = Object.assign({}, defaults, opts);
 
-        this.status = "seaching"; //searching 搜索中 success 已得到结果 timeout 超时
+        this.status = "seaching"; 
+        //searching 搜索中 
+        //success 已得到结果 
+        //timeout 超时
         return this;
     }
 

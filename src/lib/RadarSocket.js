@@ -9,7 +9,7 @@ class RadarWebSocket {
     let defaults = {
       url:
         'wss://publicld.gwgo.qq.com?account_value=0&account_type=0&appid=0&token=0',
-      maxReconnectTime: 5, // 断线重连次数
+      maxReconnectTime: 60, // 断线重连次数
       reconnectTimeout: 1000, // 断线重连时间
       maxTimeout: 3000, //超时未回复重连时间
       index: 0, // socket标识
@@ -60,7 +60,8 @@ class RadarWebSocket {
     };
     this.socket.onmessage = event => {
       this.opts.onmessage(event, this);
-      this.timer && clearTimeout(this.timer);
+      if (typeof (event.data) !== 'string')
+        this.timer && clearTimeout(this.timer);
     };
   }
   /**
@@ -68,12 +69,13 @@ class RadarWebSocket {
    * @param {*} msg
    */
   send(msg) {
+    console.log("new send");
     this.socket && this.socket.send(msg);
     this.timer = setTimeout(() => {
       // 3000ms内没响应就主动关闭并重连 
       this.manual_close = true;
       this.socket.close();
-    }, 3000);
+    }, this.opts.maxTimeout);
   }
 }
 

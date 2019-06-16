@@ -109,7 +109,7 @@ module.exports = {
             return;
           } 
 
-          if (this.mode === 'wide') {
+          if (this.mode === 'wide' || this.mode === 'temp') {
             this.buildMarkersByData(data.sprite_list);
             if (socket.task) {
               this.radarTask.finishTask(socket.task.taskIndex);

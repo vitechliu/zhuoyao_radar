@@ -14,13 +14,16 @@ module.exports = {
     initSockets() {
       // MAX_SOCKETS: this.$parent.mode === 'normal' ? 1 : WIDE_SEARCH.MAX_SOCKETS,
 
-      let max = this.mode === 'normal' ? 1 : this.thread;
+      //let max = this.mode === 'normal' ? 1 : this.thread;
+      let max = this.thread;
+      let maxTimeout = this.mode === 'temp' ? 1000 : 3000;
       for (let index = 0; index < max; index++) {
         let socket = new RadarWebSocket({
           url: SOCKET.URL,
           maxReconnectTime: SOCKET.MAX_RECONNECT_TIME,
           reconnectTimeout: SOCKET.RECONNECT_TIMEOUT,
           index: index,
+          maxTimeout: maxTimeout,
           onopen: this.onSocketOpen,
           onmessage: this.onSocketMessage,
           onclose: this.onSocketClose
@@ -119,7 +122,7 @@ module.exports = {
           this.handleMessage(data, socket);
         };
         fileReader.readAsArrayBuffer(blob);
-      }
+      } 
     },
     /**
      * 根据messageType构建socket消息

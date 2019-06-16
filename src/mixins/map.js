@@ -44,7 +44,7 @@ module.exports = {
      * 地图点击事件
      */
     clickMap(e) {
-      if (this.mode === 'wide' && this.searching) {
+      if ((this.mode === 'wide' || this.mode === 'temp') && this.searching) {
         return false;
       }
       if (!this.settings.auto_search) this.notify('位置已重置,请重新筛选');

@@ -68,7 +68,12 @@ let getParameter = (name, loca = window.location.href) => {
 let range = getParameter('range');
 let thread = getParameter('thread');
 
-let mode = location.href.indexOf('wide') > -1 ? 'wide' : 'normal';
+//let mode = location.href.indexOf('wide') > -1 ? 'wide' : 'normal';
+//紧急修复
+let mode = "temp";
+if (location.href.indexOf('wide') > -1) {
+  mode = "wide";
+} 
 
 let vueapp = new Vue({
   el: '#root',

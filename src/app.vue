@@ -129,6 +129,7 @@ export default {
         zoom:16,
       };
     }
+
     let range = Number(this.$parent.range || WIDE_SEARCH.MAX_RANGE);
     let max_range = range * 2 + 1; // 经纬方向单元格最大数
     // 线程数最多6个
@@ -136,6 +137,10 @@ export default {
       Number(this.$parent.thread || WIDE_SEARCH.MAX_SOCKETS),
       6
     );
+    if (this.$parent.mode === 'temp') {
+      range = 0;
+      thread = 1;
+    }
     return {
       location,
       settings,
@@ -283,7 +288,7 @@ export default {
         });
 
         
-        this.progressShow = true;
+        if(this.mode === 'wide') this.progressShow = true;
         this.lng_count = this.lat_count = 0;
         this.searching = true;
         for (let index = 0; index < WIDE_SEARCH.MAX_SOCKETS; index++) {

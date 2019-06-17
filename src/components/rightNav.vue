@@ -36,7 +36,7 @@
           <div class="nav-filter">
             <el-collapse v-model="activeName" accordion>
               <el-collapse-item :title="'筛选'+(settings.use_custom?'(已启用自定义)':'')" name="1">
-                <ul v-if="mode === 'normal'">
+                <ul v-if="mode === 'normal' || mode === 'temp' ">
                   <template v-for="item in filters">
                     <li :key="item.key">
                       <span class="tag">{{item.text}}</span>

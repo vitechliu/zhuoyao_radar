@@ -92,15 +92,15 @@ module.exports = {
         markeropts.labelMarker = labelMarker;
       }
 
-      this.markers[key] = new RadarMapMarker(markeropts);
+      this.markers.set(key,new RadarMapMarker(markeropts));
     },
     /**
      * 清除标记
      */
     clearAllMarkers() {
-      for (var key in this.markers) {
-        this.markers[key].clear();
-      }
+      this.markers.forEach(item => {
+        item.clear();
+      });
       this.markers.clear();
     },
     /**

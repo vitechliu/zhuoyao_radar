@@ -25,7 +25,6 @@ module.exports = {
      * 根据id获取妖灵信息
      */
     getYaolingById(id) {
-      console.log(id);
       return this.yaolings.find(item => {
         return item.Id === id;
       });

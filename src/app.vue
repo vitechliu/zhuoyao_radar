@@ -129,7 +129,8 @@ export default {
       }
       if (!this.searching) {
         this.searching = true;
-        let url = "http://127.0.0.1:7777/yaoling"
+        let url = "http://radarapi.vitechliu.com/yaoling";
+        //要key的 别指望了 傻逼们
         $.ajax({
           type: "GET",
           url:url,

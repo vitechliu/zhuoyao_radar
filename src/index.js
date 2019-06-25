@@ -56,28 +56,26 @@ Vue.use(Row);
 Vue.use(Col);
 Vue.use(Checkbox);
 
-let getParameter = (name, loca = window.location.href) => {
-  const regexS = `[\\?&]${name}=([^&#]*)`;
-  const regex = new RegExp(regexS);
-  const results = regex.exec(loca);
+// let getParameter = (name, loca = window.location.href) => {
+//   const regexS = `[\\?&]${name}=([^&#]*)`;
+//   const regex = new RegExp(regexS);
+//   const results = regex.exec(loca);
 
-  if (results === null) return '';
-  return results[1];
-};
+//   if (results === null) return '';
+//   return results[1];
+// };
 
-let range = getParameter('range');
-let thread = getParameter('thread');
+// let range = getParameter('range');
+// let thread = getParameter('thread');
 
 //let mode = location.href.indexOf('wide') > -1 ? 'wide' : 'normal';
 //紧急修复
-let mode = "temp";
-if (location.href.indexOf('wide') > -1) {
-  mode = "wide";
-} 
+// if (location.href.indexOf('wide') > -1) {
+//   mode = "wide";
+// } 
 
 let vueapp = new Vue({
   el: '#root',
-  data: { mode, range, thread },
   template: '<App/>',
   components: { App }
 });

@@ -231,66 +231,12 @@ div.el-switch {
   z-index: 99999;
 }
 
-.filter-dialog {
-  .check {
-    position:absolute;
-    right:50px;
-    top:20px;
-  }
-  .el-dialog__body {
-    padding-top:5px;
-  }
-  .el-dialog {
-    width:90%;
-    height:90%;
-    margin-top:50px!important;
-    @media (min-width: 768px) {
-      width:700px;
-      height:500px;
-      margin-top:calc(50vh - 250px)!important;
-    }
-    @media (min-width: 1280px) {
-      width:1000px;
-    }
-  }
-  .filter-list {
-    max-height:calc(90vh - 140px);
-    overflow: auto;
-    @media (min-width: 768px) {
-      max-height:400px;
-    }
-  }
-  .filter-content {
-    border-radius:9px;
-    cursor: pointer;
-    transition:background-color .5s;
-    background-color:transparent;
-    margin-bottom:3px;
-    height:30px;
-    img {
-      height:30px;
-      width:30px;
-      border-radius:15px;
-    }
-    span {
-      transition:color .5s;
-      position:relative;
-      bottom:7px;
-      color:#333;
-    }
-    
-    span.active::after {
-      content:"up";
-      font-size:12px;
-      vertical-align: super;
-      color:rgb(255,50,50);
-    }
-    &.active {
-      background-color:rgba(100,100,255,.9);
-      span {
-        color:white;
-      }
-    }
-  }
-  
+div.header {
+  position:absolute;
+  bottom:10px;
+  left:10px;
+  font-size:16px;
+  color:#222;
+  z-index:999;
+  text-shadow:0 1px 4px violet;
 }

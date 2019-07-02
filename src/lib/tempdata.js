@@ -2188,6 +2188,15 @@ module.exports = {
     "SmallImgPath": "128_head/40003_GouMang_head.png",
     "Level": 1
   }, {
+    "Id": 2040004,
+    "Name": "应龙",
+    "FiveEle": ["水"],
+    "PrefabName": "40004_YingLong",
+    "ImgName": "40004",
+    "BigImgPath": "512_body/40004_YingLong_big.png",
+    "SmallImgPath": "128_head/40004_YingLong_head.png",
+    "Level": 1
+  }, {
     "Id": 2000401,
     "Name": "井宿星",
     "FiveEle": ["无"],
@@ -2412,6 +2421,105 @@ module.exports = {
     "BigImgPath": "512_body/425_ZhuQue_big.png",
     "SmallImgPath": "128_head/425_ZhuQue_head.png",
     "Level": 1
+  }, {
+    "Id": 2004037,
+    "Name": "聆妹妹",
+    "FiveEle": ["空"],
+    "PrefabName": "4037_QuanJia",
+    "ImgName": "4037",
+    "BigImgPath": "512_body/4037_QuanJia_big.png",
+    "SmallImgPath": "128_head/4037_QuanJia_head.png",
+    "Level": 1
+  }, {
+    "Id": 2004038,
+    "Name": "Food小宝",
+    "FiveEle": ["空"],
+    "PrefabName": "4038_QuanJia",
+    "ImgName": "4038",
+    "BigImgPath": "512_body/4038_QuanJia_big.png",
+    "SmallImgPath": "128_head/4038_QuanJia_head.png",
+    "Level": 2
+  }, {
+    "Id": 2004039,
+    "Name": "BB老大",
+    "FiveEle": ["空"],
+    "PrefabName": "4039_QuanJia",
+    "ImgName": "4039",
+    "BigImgPath": "512_body/4039_QuanJia_big.png",
+    "SmallImgPath": "128_head/4039_QuanJia_head.png",
+    "Level": 3
+  }, {
+    "Id": 2000064,
+    "Name": "地藏小龛",
+    "FiveEle": ["土"],
+    "PrefabName": "64_DiZangKan",
+    "ImgName": "64",
+    "BigImgPath": "512_body/64_DiZangKan_big.png",
+    "SmallImgPath": "128_head/64_DiZangKan_head.png",
+    "Level": 1
+  }, {
+    "Id": 2000065,
+    "Name": "小土地",
+    "FiveEle": ["土"],
+    "PrefabName": "65_XiaoTuDi",
+    "ImgName": "65",
+    "BigImgPath": "512_body/65_XiaoTuDi_big.png",
+    "SmallImgPath": "128_head/65_XiaoTuDi_head.png",
+    "Level": 2
+  }, {
+    "Id": 2000066,
+    "Name": "小福星",
+    "FiveEle": ["金", "土"],
+    "PrefabName": "66_XiaoFuXing",
+    "ImgName": "66",
+    "BigImgPath": "512_body/66_XiaoFuXing_big.png",
+    "SmallImgPath": "128_head/66_XiaoFuXing_head.png",
+    "Level": 2
+  }, {
+    "Id": 2000067,
+    "Name": "小山神",
+    "FiveEle": ["木", "土"],
+    "PrefabName": "67_XiaoShanShen",
+    "ImgName": "67",
+    "BigImgPath": "512_body/67_XiaoShanShen_big.png",
+    "SmallImgPath": "128_head/67_XiaoShanShen_head.png",
+    "Level": 2
+  }, {
+    "Id": 2000068,
+    "Name": "小河神",
+    "FiveEle": ["水", "土"],
+    "PrefabName": "68_XiaoHeShen",
+    "ImgName": "68",
+    "BigImgPath": "512_body/68_XiaoHeShen_big.png",
+    "SmallImgPath": "128_head/68_XiaoHeShen_head.png",
+    "Level": 3
+  }, {
+    "Id": 2000069,
+    "Name": "小火神",
+    "FiveEle": ["火", "土"],
+    "PrefabName": "69_XiaoHuoShen",
+    "ImgName": "69",
+    "BigImgPath": "512_body/69_XiaoHuoShen_big.png",
+    "SmallImgPath": "128_head/69_XiaoHuoShen_head.png",
+    "Level": 3
+  }, {
+    "Id": 2000070,
+    "Name": "小财神",
+    "FiveEle": ["金", "土"],
+    "PrefabName": "70_XiaoCaiShen",
+    "ImgName": "70",
+    "BigImgPath": "512_body/70_XiaoCaiShen_big.png",
+    "SmallImgPath": "128_head/70_XiaoCaiShen_head.png",
+    "Level": 3
+  }, {
+    "Id": 2000071,
+    "Name": "小寿星",
+    "FiveEle": ["木", "土"],
+    "PrefabName": "71_XiaoShouXing",
+    "ImgName": "71",
+    "BigImgPath": "512_body/71_XiaoShouXing_big.png",
+    "SmallImgPath": "128_head/71_XiaoShouXing_head.png",
+    "Level": 3
   }]
 
 };

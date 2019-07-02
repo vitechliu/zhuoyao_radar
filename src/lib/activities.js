@@ -32,5 +32,7 @@ module.exports = {
         2000402:true,
         2000403:true,
         2000404:true,
+
+        2000065:true,
     }
 };

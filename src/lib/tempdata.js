@@ -2520,6 +2520,96 @@ module.exports = {
     "BigImgPath": "512_body/71_XiaoShouXing_big.png",
     "SmallImgPath": "128_head/71_XiaoShouXing_head.png",
     "Level": 3
+  }, {
+    Id: 2000433,
+    Name: "呆呆貐",
+    FiveEle: ["冰"],
+    PrefabName: "433_BiShuiYu",
+    ImgName: "433",
+    BigImgPath: "512_body/433_BiShuiYu_big.png",
+    SmallImgPath: "128_head/433_BiShuiYu_head.png",
+    Level: 1
+}, {
+    Id: 2000434,
+    Name: "善水貐",
+    FiveEle: ["冰"],
+    PrefabName: "434_BiShuiYu",
+    ImgName: "434",
+    BigImgPath: "512_body/434_BiShuiYu_big.png",
+    SmallImgPath: "128_head/434_BiShuiYu_head.png",
+    Level: 2
+}, {
+    Id: 2000435,
+    Name: "壁水貐",
+    FiveEle: ["冰"],
+    PrefabName: "435_BiShuiYu",
+    ImgName: "435",
+    BigImgPath: "512_body/435_BiShuiYu_big.png",
+    SmallImgPath: "128_head/435_BiShuiYu_head.png",
+    Level: 3
+}, {
+    Id: 2000436,
+    Name: "幼角獬",
+    FiveEle: ["空"],
+    PrefabName: "436_DouMuXie",
+    ImgName: "436",
+    BigImgPath: "512_body/436_DouMuXie_big.png",
+    SmallImgPath: "128_head/436_DouMuXie_head.png",
+    Level: 1
+}, {
+    Id: 2000437,
+    Name: "法正獬",
+    FiveEle: ["空"],
+    PrefabName: "437_DouMuXie",
+    ImgName: "437",
+    BigImgPath: "512_body/437_DouMuXie_big.png",
+    SmallImgPath: "128_head/437_DouMuXie_head.png",
+    Level: 2
+}, {
+    Id: 2000438,
+    Name: "斗木獬",
+    FiveEle: ["空"],
+    PrefabName: "438_DouMuXie",
+    ImgName: "438",
+    BigImgPath: "512_body/438_DouMuXie_big.png",
+    SmallImgPath: "128_head/438_DouMuXie_head.png",
+    Level: 3
+}, {
+    Id: 2000224,
+    Name: "雨收云",
+    FiveEle: ["水", "毒"],
+    PrefabName: "224_YuShi",
+    ImgName: "224",
+    BigImgPath: "512_body/224_YuShi_big.png",
+    SmallImgPath: "128_head/224_YuShi_head.png",
+    Level: 1
+}, {
+    Id: 2000225,
+    Name: "雨打梨",
+    FiveEle: ["水", "毒"],
+    PrefabName: "225_YuShi",
+    ImgName: "225",
+    BigImgPath: "512_body/225_YuShi_big.png",
+    SmallImgPath: "128_head/225_YuShi_head.png",
+    Level: 2
+}, {
+    Id: 2000226,
+    Name: "雨无歇",
+    FiveEle: ["水", "毒"],
+    PrefabName: "226_YuShi",
+    ImgName: "226",
+    BigImgPath: "512_body/226_YuShi_big.png",
+    SmallImgPath: "128_head/226_YuShi_head.png",
+    Level: 3
+}, {
+    Id: 2040005,
+    Name: "旱魃",
+    FiveEle: ["烈"],
+    PrefabName: "40005_HanBa",
+    ImgName: "40005",
+    BigImgPath: "512_body/40005_HanBa_big.png",
+    SmallImgPath: "128_head/40005_HanBa_head.png",
+    Level: 1
   }]
 
 };

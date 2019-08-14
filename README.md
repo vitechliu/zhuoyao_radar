@@ -1,5 +1,8 @@
 # 捉妖雷达 web版
 
+**DEPRECATED WARNING**   
+**本项目已不再维护 19/08/01**
+
 [![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.svg?v=103)](https://opensource.org/licenses/GPL-3.0/)  [![Gitter](https://badges.gitter.im/zhuoyao_radar/community.svg)](https://gitter.im/zhuoyao_radar/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 欢迎PR，声明：本项目永远不会提供虚拟定位、经纬度坐标、自动化脚本相关服务。   
